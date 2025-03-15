@@ -76,7 +76,7 @@ const Landing = () => {
             Acesse dados financeiros sem código
           </h1>
           <p className="mb-10 max-w-3xl text-xl text-blue-100 md:text-2xl">
-            Potencialize sua análise financeira com agentes de IA que
+            Potencialize sua análise financeira com agentes de Inteligência Artificial que
             simplificam o acesso a informações do mercado. Sem SQL. Sem APIs.
             Apenas resultados.
           </p>
@@ -363,7 +363,7 @@ const Landing = () => {
           </h2>
           <p className="mx-auto mb-10 max-w-3xl text-xl text-blue-100">
             Entre para nossa lista de espera e seja um dos primeiros a
-            experimentar o poder dos agentes de IA no mercado financeiro.
+            experimentar o poder dos agentes de Inteligência Artificial no mercado financeiro.
           </p>
 
           {!isSubmitted ? (
