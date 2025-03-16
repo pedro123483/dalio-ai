@@ -19,7 +19,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "~/components/ui/accordion";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { api } from "~/trpc/react";
 
 const Landing = () => {
@@ -64,11 +64,11 @@ const Landing = () => {
             {/* <Brain className="w-8 h-8" /> */}
             <h1 className="text-2xl font-bold">Dalio AI</h1>
           </div>
-          {/* <Link to="/dashboard">
-            <Button variant="outline" className="text-white border-white hover:bg-white/10">
-              Entrar no Dashboard
+          <Link href="/sign-in">
+            <Button variant="default" className="bg-blue-600 text-white hover:bg-blue-600">
+              Entrar
             </Button>
-          </Link> */}
+          </Link>
         </div>
 
         <div className="container mx-auto flex flex-col items-center px-4 py-20 text-center md:py-32">
@@ -76,9 +76,9 @@ const Landing = () => {
             Acesse dados financeiros sem código
           </h1>
           <p className="mb-10 max-w-3xl text-xl text-blue-100 md:text-2xl">
-            Potencialize sua análise financeira com agentes de Inteligência Artificial que
-            simplificam o acesso a informações do mercado. Sem SQL. Sem APIs.
-            Apenas resultados.
+            Potencialize sua análise financeira com agentes de Inteligência
+            Artificial que simplificam o acesso a informações do mercado. Sem
+            SQL. Sem APIs. Apenas resultados.
           </p>
 
           {!isSubmitted ? (
@@ -363,7 +363,8 @@ const Landing = () => {
           </h2>
           <p className="mx-auto mb-10 max-w-3xl text-xl text-blue-100">
             Entre para nossa lista de espera e seja um dos primeiros a
-            experimentar o poder dos agentes de Inteligência Artificial no mercado financeiro.
+            experimentar o poder dos agentes de Inteligência Artificial no
+            mercado financeiro.
           </p>
 
           {!isSubmitted ? (
