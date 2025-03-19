@@ -65,15 +65,18 @@ const Landing = () => {
             <h1 className="text-2xl font-bold">Dalio AI</h1>
           </div>
           <Link href="/sign-in">
-            <Button variant="default" className="bg-blue-600 text-white hover:bg-blue-600">
+            <Button
+              variant="default"
+              className="bg-blue-600 text-white hover:bg-blue-600"
+            >
               Entrar
             </Button>
           </Link>
         </div>
 
         <div className="container mx-auto flex flex-col items-center px-4 py-20 text-center md:py-32">
-          <h1 className="mb-6 text-4xl font-bold leading-tight md:text-6xl">
-            Acesse dados financeiros sem código
+          <h1 className="mb-6 text-4xl font-bold leading-tight md:text-5xl">
+            O futuro do mercado financeiro começa aqui
           </h1>
           <p className="mb-10 max-w-3xl text-xl text-blue-100 md:text-2xl">
             Potencialize sua análise financeira com agentes de Inteligência
@@ -81,35 +84,11 @@ const Landing = () => {
             SQL. Sem APIs. Apenas resultados.
           </p>
 
-          {!isSubmitted ? (
-            <form
-              onSubmit={handleSubmit}
-              className="flex w-full max-w-md flex-col gap-4"
-            >
-              <Input
-                type="email"
-                placeholder="Seu email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="h-12 border-white/20 bg-white/10 text-white placeholder:text-white/60"
-              />
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="h-12 w-full text-lg"
-              >
-                {isSubmitting ? "Enviando..." : "Entrar para a lista de espera"}
-                {!isSubmitting && <ArrowRight className="ml-2" />}
-              </Button>
-            </form>
-          ) : (
-            <div className="flex items-center gap-2 rounded-md bg-white/10 px-6 py-4">
-              <CheckCircle className="text-green-400" />
-              <p className="text-lg font-medium">
-                Você está na lista de espera! Entraremos em contato em breve.
-              </p>
-            </div>
-          )}
+          <div className="flex w-full max-w-md flex-col gap-4">
+            <Link href="/sign-up">
+              <Button className="h-12 w-full text-lg">Criar conta</Button>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -362,38 +341,17 @@ const Landing = () => {
             Pronto para transformar sua análise financeira?
           </h2>
           <p className="mx-auto mb-10 max-w-3xl text-xl text-blue-100">
-            Entre para nossa lista de espera e seja um dos primeiros a
-            experimentar o poder dos agentes de Inteligência Artificial no
-            mercado financeiro.
+            Crie sua conta e seja um dos primeiros a experimentar o poder dos
+            agentes de Inteligência Artificial no mercado financeiro.
           </p>
 
-          {!isSubmitted ? (
-            <form
-              onSubmit={handleSubmit}
-              className="mx-auto flex max-w-md flex-col gap-4 sm:flex-row"
-            >
-              <Input
-                type="email"
-                placeholder="Seu email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="flex-grow border-white/20 bg-white/10 text-white placeholder:text-white/60"
-              />
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                variant="secondary"
-                className="whitespace-nowrap"
-              >
-                {isSubmitting ? "Enviando..." : "Entrar na lista"}
+          <div className="flex justify-center">
+            <Link href="/sign-up">
+              <Button className="h-12 w-auto bg-gray-900 px-8 text-lg enabled:hover:bg-gray-800">
+                Criar conta
               </Button>
-            </form>
-          ) : (
-            <div className="mx-auto flex max-w-md items-center justify-center gap-2 rounded-md bg-white/10 px-6 py-4">
-              <CheckCircle className="text-green-400" />
-              <p className="font-medium">Você está na lista de espera!</p>
-            </div>
-          )}
+            </Link>
+          </div>
         </div>
       </section>
 
