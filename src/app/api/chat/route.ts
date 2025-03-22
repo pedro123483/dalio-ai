@@ -8,9 +8,12 @@ export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: openai("gpt-4-turbo"),
+    model: openai("gpt-4.5-preview"),
     system: "You are a helpful assistant.",
     messages,
+    tools: {
+      web_search_preview: openai.tools.webSearchPreview(),
+    },
   });
 
   return result.toDataStreamResponse();
