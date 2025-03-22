@@ -1,16 +1,18 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Navbar } from '~/components/layout/Navbar';
-import { Sidebar } from '~/components/layout/Sidebar';
-import { ChatInterface } from '~/components/dashboard/ChatInterface';
-import { useIsMobile } from '~/hooks/use-mobile';
-import { cn } from '~/lib/utils';
+import { useState, useEffect } from "react";
+import { Navbar } from "~/components/layout/Navbar";
+import { Sidebar } from "~/components/layout/Sidebar";
+import { ChatInterface } from "~/components/dashboard/ChatInterface";
+import { useIsMobile } from "~/hooks/use-mobile";
+import { cn } from "~/lib/utils";
+import { useUser } from "@clerk/clerk-react";
 
 const Index = () => {
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  //const { isLoaded, isSignedIn, user } = useUser();
 
   useEffect(() => {
     setMounted(true);
@@ -30,21 +32,20 @@ const Index = () => {
   if (!mounted) return null;
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="flex min-h-screen flex-col bg-background px-5">
       <Navbar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
-      
+
       <div className="flex flex-1 overflow-hidden">
-        {/* <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
-         */}
-        <main 
+        {/* <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} /> */}
+        <main
           className={cn(
             "flex-1 overflow-y-auto transition-all duration-300 ease-in-out",
-            sidebarOpen && !isMobile ? "ml-[280px]" : "",
-            isMobile ? "w-full" : ""
+            // sidebarOpen && !isMobile ? "ml-[280px]" : "",
+            // isMobile ? "w-full" : ""
           )}
         >
-          <div className="container py-4 h-full">
-            <div className="w-full h-full">
+          <div className="h-full py-4">
+            <div className="h-full w-full">
               <ChatInterface />
             </div>
           </div>
@@ -55,4 +56,3 @@ const Index = () => {
 };
 
 export default Index;
-

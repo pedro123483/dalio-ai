@@ -9,27 +9,32 @@ interface ChatInputProps {
   isLoading: boolean;
 }
 
-export function ChatInput({ input, setInput, handleSubmit, isLoading }: ChatInputProps) {
+export function ChatInput({
+  input,
+  handleInputChange,
+  handleSubmit,
+  isLoading,
+}: any) {
   return (
-    <div className="p-4 border-t">
+    <div className="border-t p-4">
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Textarea
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={handleInputChange}
           placeholder="Digite sua mensagem..."
-          className="resize-none min-h-[60px] max-h-[120px]"
+          className="max-h-[120px] min-h-[60px] resize-none"
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
+            if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
               handleSubmit(e);
             }
           }}
           disabled={isLoading}
         />
-        <Button 
-          type="submit" 
-          size="icon" 
-          className="h-auto aspect-square" 
+        <Button
+          type="submit"
+          size="icon"
+          className="aspect-square h-auto"
           disabled={!input.trim() || isLoading}
         >
           {isLoading ? (

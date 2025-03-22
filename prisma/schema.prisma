@@ -17,11 +17,11 @@ model Lead {
 }
 
 model User {
-    id String @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    firstName String?
-    lastName String?
-    imageUrl String?
-    emailAddress String @unique
+    id           String   @id @default(cuid())
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+    firstName    String?
+    lastName     String?
+    imageUrl     String?
+    emailAddress String   @unique
 }
