@@ -1,15 +1,15 @@
 "use client";
 
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, BotMessageSquare, BotIcon } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { Message } from "~/types/chat";
 import { useUser } from "@clerk/clerk-react";
-
+import { StockInfoCard } from "./StockInfoCard";
 interface ChatMessageProps {
   message: Message;
 }
 
-export function ChatMessage({ message }: ChatMessageProps ) {
+export function ChatMessage({ message }: any) {
   const { isLoaded, isSignedIn, user } = useUser();
 
   return (
@@ -21,8 +21,8 @@ export function ChatMessage({ message }: ChatMessageProps ) {
     >
       <div className="flex max-w-[80%] items-start gap-3">
         {message.role === "assistant" && (
-          <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-primary">
-            <MessageSquare size={16} className="text-primary-foreground" />
+          <div className="mt-0.5 flex h-8 w-8 min-w-8 items-center justify-center rounded-full bg-blue-600">
+            <BotIcon size={16} className="text-white" />
           </div>
         )}
         <div
@@ -43,9 +43,39 @@ export function ChatMessage({ message }: ChatMessageProps ) {
         </div>
         {message.role === "user" && (
           <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-secondary">
-            <img className='rounded-full' height={30} width={30} src={user?.imageUrl ?? undefined} />
+            <img
+              className="rounded-full"
+              height={30}
+              width={30}
+              src={user?.imageUrl ?? undefined}
+            />
           </div>
         )}
+
+        <div>
+          {message.toolInvocations?.map((toolInvocation: any) => {
+            const { toolName, toolCallId, state } = toolInvocation;
+            console.log("tool invocation", toolInvocation);
+            if (state === "result") {
+              if (toolName === "getAssetQuote") {
+                const data = toolInvocation.result.results[0];
+                return (
+                  <div key={toolCallId}>
+                    <StockInfoCard {...data} />
+                  </div>
+                );
+              }
+            } else {
+              return (
+                <div key={toolCallId}>
+                  {toolName === "getAssetQuote" ? (
+                    <div>Buscando informações na bolsa...</div>
+                  ) : null}
+                </div>
+              );
+            }
+          })}
+        </div>
       </div>
     </div>
   );

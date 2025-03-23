@@ -12,13 +12,14 @@ import { useChat } from "@ai-sdk/react";
 export function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const { messages, input, handleInputChange, handleSubmit, setInput } = useChat({});
+  const { messages, input, handleInputChange, handleSubmit, setInput } =
+    useChat({});
 
   // Exemplos de perguntas que o usuário pode fazer
   const suggestions = [
     "Como está o mercado hoje?",
-    "Explique a relação entre taxa de juros e bolsa",
-    "Quais ações tiveram melhor desempenho este mês?",
+    "Como está a ação do BTG Pactual?",
+    "Busque na web as principais notícias do mercado brasileiro",
     "O que é um ETF?",
   ];
 
@@ -40,8 +41,8 @@ export function ChatInterface() {
         </div>
 
         {messages.length === 0 && (
-          <ChatSuggestions 
-            suggestions={suggestions} 
+          <ChatSuggestions
+            suggestions={suggestions}
             onSelectSuggestion={(suggestion) => setInput(suggestion)}
           />
         )}
