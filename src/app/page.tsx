@@ -21,6 +21,7 @@ import {
 } from "~/components/ui/accordion";
 import { Link } from "react-router-dom";
 import { api } from "~/trpc/react";
+import { VisualWorkflow } from "~/components/landing/VisualWorkflow";
 
 const Landing = () => {
   const [email, setEmail] = useState("");
@@ -72,13 +73,13 @@ const Landing = () => {
         </div>
 
         <div className="container mx-auto flex flex-col items-center px-4 py-20 text-center md:py-32">
-          <h1 className="mb-6 text-4xl font-bold leading-tight md:text-6xl">
-            Acesse dados financeiros sem código
+          <h1 className="mb-6 text-4xl font-bold leading-tight md:text-5xl">
+            O futuro do mercado financeiro começa aqui
           </h1>
           <p className="mb-10 max-w-3xl text-xl text-blue-100 md:text-2xl">
-            Potencialize sua análise financeira com agentes de Inteligência Artificial que
-            simplificam o acesso a informações do mercado. Sem SQL. Sem APIs.
-            Apenas resultados.
+            Potencialize sua análise financeira com agentes de Inteligência
+            Artificial que simplificam o acesso a informações do mercado. Sem
+            SQL. Sem APIs. Apenas resultados.
           </p>
 
           {!isSubmitted ? (
@@ -255,8 +256,32 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* FAQ Section */}
+      {/* How It Works Section */}
       <section className="bg-white py-20">
+        <div className="container mx-auto px-4">
+          <h2 className="mb-6 text-center text-3xl font-bold md:text-4xl">
+            Como Funciona
+          </h2>
+          <p className="mx-auto mb-12 max-w-3xl text-center text-xl text-gray-600">
+            Transformando perguntas em linguagem natural em dados financeiros
+            acionáveis
+          </p>
+
+          <VisualWorkflow />
+
+          <div className="mt-16 text-center">
+            <p className="mx-auto mb-6 max-w-2xl text-gray-600">
+              Nossa inteligência artificial processa sua pergunta, busca dados
+              em tempo real de fontes confiáveis, e apresenta resultados
+              precisos em segundos — sem necessidade de codificação ou
+              conhecimento técnico.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="bg-gray-50 py-20">
         <div className="container mx-auto px-4">
           <h2 className="mb-6 text-center text-3xl font-bold md:text-4xl">
             Perguntas Frequentes
@@ -363,7 +388,8 @@ const Landing = () => {
           </h2>
           <p className="mx-auto mb-10 max-w-3xl text-xl text-blue-100">
             Entre para nossa lista de espera e seja um dos primeiros a
-            experimentar o poder dos agentes de Inteligência Artificial no mercado financeiro.
+            experimentar o poder dos agentes de Inteligência Artificial no
+            mercado financeiro.
           </p>
 
           {!isSubmitted ? (
