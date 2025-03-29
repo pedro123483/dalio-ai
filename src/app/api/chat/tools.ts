@@ -5,7 +5,7 @@ import { openai } from "@ai-sdk/openai";
 
 export const brapiQuoteTool = createTool({
   description:
-    "Buscar cotação de um ou mais ativos financeiros (ações, fundos imobiliários, índices e BDRs) do mercado financeiro brasileiro",
+    "Buscar cotação de um ou mais ativos financeiros (ações, fundos imobiliários, índices e BDRs) do mercado financeiro brasileiro. Após buscar a cotação, forneça uma análise detalhada sobre o ativo, explicando o que significam os valores, a variação percentual e as tendências recentes.",
   parameters: z.object({
     ticker: z.string().describe("Ticker do ativo a ser buscado"),
   }),
@@ -14,6 +14,8 @@ export const brapiQuoteTool = createTool({
     const { data } = await axios.get(
       `https://brapi.dev/api/quote/${ticker}?token=${process.env.BRAPI_API_KEY}`,
     );
+
+    console.log("data", data);
 
     return data;
   },

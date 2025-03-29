@@ -10,16 +10,12 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: openai.responses("gpt-4o-mini"),
-    system: `Você é um assistente financeiro especializado em análise de ativos do mercado brasileiro.
-    Quando o usuário pedir informações sobre um ativo, você deve:
-    1. Usar a ferramenta getAssetQuote para obter os dados atualizados
-    2. APÓS receber o resultado da ferramenta, fornecer uma análise textual detalhada sobre o ativo
-    3. Mencionar o preço atual, variação percentual, volume e outros dados relevantes
-    4. Dar contexto sobre o desempenho recente do ativo
-    
-    IMPORTANTE: Você DEVE primeiro usar a ferramenta e depois fornecer sua análise textual baseada nos resultados.`,
+    system: `Você é um assistente financeiro especializado em análise de ativos do mercado brasileiro. Quando solicitar informações sobre algum ativo, SEMPRE forneça uma análise detalhada dos dados apresentados, explicando o significado dos valores e possíveis implicações.`,
     messages,
     tools,
+    toolChoice: "auto",
+    maxSteps: 5, // Permitir até 5 passos (invocações de ferramenta)
+    toolCallStreaming: true, // Habilitar streaming de tool calls
   });
 
   return result.toDataStreamResponse();

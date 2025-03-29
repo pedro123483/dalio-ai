@@ -29,32 +29,32 @@ const Landing = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const createLead = api.lead.createLead.useMutation();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !email.includes("@")) {
-      toast.error("Por favor, insira um email válido");
-      return;
-    }
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (!email || !email.includes("@")) {
+  //     toast.error("Por favor, insira um email válido");
+  //     return;
+  //   }
 
-    setIsSubmitting(true);
+  //   setIsSubmitting(true);
 
-    createLead.mutate(
-      {
-        email: email,
-      },
-      {
-        onSuccess: () => {
-          setIsSubmitting(false);
-          setIsSubmitted(true);
-          toast.success("Obrigado! Você está na nossa lista de espera.");
-          setEmail("");
-        },
-        onError: () => {
-          toast.error("Erro ao salvar o email");
-        },
-      },
-    );
-  };
+  //   createLead.mutate(
+  //     {
+  //       email: email,
+  //     },
+  //     {
+  //       onSuccess: () => {
+  //         setIsSubmitting(false);
+  //         setIsSubmitted(true);
+  //         toast.success("Obrigado! Você está na nossa lista de espera.");
+  //         setEmail("");
+  //       },
+  //       onError: () => {
+  //         toast.error("Erro ao salvar o email");
+  //       },
+  //     },
+  //   );
+  // };
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -87,7 +87,7 @@ const Landing = () => {
 
           <div className="flex w-full max-w-md flex-col gap-4">
             <Link href="/sign-up">
-              <Button className="h-12 w-full text-lg">Criar conta</Button>
+              <Button className="h-12 w-full text-lg">Criar conta gratuitamente</Button>
             </Link>
           </div>
         </div>
@@ -366,7 +366,7 @@ const Landing = () => {
             Pronto para transformar sua análise financeira?
           </h2>
           <p className="mx-auto mb-10 max-w-3xl text-xl text-blue-100">
-            Entre para nossa lista de espera e seja um dos primeiros a
+            Crie sua conta e seja um dos primeiros a
             experimentar o poder dos agentes de Inteligência Artificial no
             mercado financeiro.
           </p>
@@ -374,7 +374,7 @@ const Landing = () => {
           <div className="flex justify-center">
             <Link href="/sign-up">
               <Button className="h-12 w-auto bg-gray-900 px-8 text-lg enabled:hover:bg-gray-800">
-                Criar conta
+                Criar conta gratuitamente
               </Button>
             </Link>
           </div>
