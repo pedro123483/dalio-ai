@@ -21,6 +21,7 @@ import {
 } from "~/components/ui/accordion";
 import Link from "next/link";
 import { api } from "~/trpc/react";
+import { VisualWorkflow } from "~/components/landing/VisualWorkflow";
 
 const Landing = () => {
   const [email, setEmail] = useState("");
@@ -234,8 +235,32 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* FAQ Section */}
+      {/* How It Works Section */}
       <section className="bg-white py-20">
+        <div className="container mx-auto px-4">
+          <h2 className="mb-6 text-center text-3xl font-bold md:text-4xl">
+            Como Funciona
+          </h2>
+          <p className="mx-auto mb-12 max-w-3xl text-center text-xl text-gray-600">
+            Transformando perguntas em linguagem natural em dados financeiros
+            acionáveis
+          </p>
+
+          <VisualWorkflow />
+
+          <div className="mt-16 text-center">
+            <p className="mx-auto mb-6 max-w-2xl text-gray-600">
+              Nossa inteligência artificial processa sua pergunta, busca dados
+              em tempo real de fontes confiáveis, e apresenta resultados
+              precisos em segundos — sem necessidade de codificação ou
+              conhecimento técnico.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="bg-gray-50 py-20">
         <div className="container mx-auto px-4">
           <h2 className="mb-6 text-center text-3xl font-bold md:text-4xl">
             Perguntas Frequentes
@@ -341,8 +366,9 @@ const Landing = () => {
             Pronto para transformar sua análise financeira?
           </h2>
           <p className="mx-auto mb-10 max-w-3xl text-xl text-blue-100">
-            Crie sua conta e seja um dos primeiros a experimentar o poder dos
-            agentes de Inteligência Artificial no mercado financeiro.
+            Entre para nossa lista de espera e seja um dos primeiros a
+            experimentar o poder dos agentes de Inteligência Artificial no
+            mercado financeiro.
           </p>
 
           <div className="flex justify-center">
