@@ -29,23 +29,34 @@ export const assetComparisonTool = createTool({
       .describe(
         "Lista de tickers separados por vírgula (ex: PETR4,ITUB4,IBOV)",
       ),
-    range: z.string().describe("Intervalo de tempo ('1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max')"),
-    interval: z.string().describe("Intervalo entre pontos ('1d', '5d', '1wk', '1mo', '3mo')"),
+    range: z
+      .string()
+      .describe(
+        "Intervalo de tempo ('1d', '5d', '1mo', '3mo', '6mo', '1y', '2y', '5y', '10y', 'ytd', 'max'), default: '1y'",
+      ),
+    interval: z
+      .string()
+      .describe(
+        "Intervalo entre pontos ('1d', '5d', '1wk', '1mo', '3mo'), default: '1mo'",
+      ),
   }),
 
-  execute: async function ({ tickers, range, interval}) {
-    console.log("entrei na funcao");
-    console.log("tickers", tickers);
-    console.log("range", range);
-    console.log("interval", interval);
-
-    const token = process.env.BRAPI_API_KEY;
-
+  execute: async function ({ tickers, range, interval }) {
     if (tickers && tickers.trim() !== "") {
       try {
+        // Valores padrão mais leves
+        const safeRange = range || "1y";
+        const safeInterval = interval || "1mo";
+
         const stockResponse = await axios.get(
-          `https://brapi.dev/api/quote/${tickers}?token=${token}&range=${range}&interval=${interval}`,
+          `https://brapi.dev/api/quote/${tickers}?token=${process.env.BRAPI_API_KEY}&range=${safeRange}&interval=${safeInterval}`,
         );
+
+        console.log("stockResponse", stockResponse.data);
+
+        for (const asset of stockResponse.data.results) {
+          console.log("asset historicalDataPrice", asset.historicalDataPrice);
+        }
 
         const results = [];
         const dateMap = new Map();
@@ -53,14 +64,19 @@ export const assetComparisonTool = createTool({
         if (stockResponse.data && stockResponse.data.results) {
           // Primeiro, colete todos os dados por data
           for (const asset of stockResponse.data.results) {
-            if (asset.historicalDataPrice && asset.historicalDataPrice.length > 0) {
+            if (
+              asset.historicalDataPrice &&
+              asset.historicalDataPrice.length > 0
+            ) {
               asset.historicalDataPrice.forEach((item: any) => {
-                const date = new Date(item.date * 1000).toISOString().split("T")[0];
-                
+                const date = new Date(item.date * 1000)
+                  .toISOString()
+                  .split("T")[0];
+
                 if (!dateMap.has(date)) {
                   dateMap.set(date, { month: date });
                 }
-                
+
                 const dateEntry = dateMap.get(date);
                 dateEntry[asset.symbol] = item.close;
               });
@@ -69,9 +85,11 @@ export const assetComparisonTool = createTool({
 
           // Converta o Map para array de objetos
           results.push(...Array.from(dateMap.values()));
-          
+
           // Ordene por data
-          results.sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
+          results.sort(
+            (a, b) => new Date(a.month).getTime() - new Date(b.month).getTime(),
+          );
         }
 
         return results;
@@ -79,6 +97,7 @@ export const assetComparisonTool = createTool({
         //console.log("stockResponse", stockResponse.data);
       } catch (error) {
         console.error("Erro ao buscar dados de ações:", error);
+        return [{ month: "Error", error: "Falha ao buscar dados" }];
       }
     }
   },

@@ -6,6 +6,7 @@ import { Message } from "~/types/chat";
 import { useUser } from "@clerk/clerk-react";
 import { StockInfoCard } from "./StockInfoCard";
 import { AreaChartComparation } from "./AreaChartComparation";
+import { useEffect, useState } from "react";
 interface ChatMessageProps {
   message: Message;
 }
@@ -69,6 +70,16 @@ export function ChatMessage({ message }: any) {
 
     return null;
   };
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div
@@ -155,7 +166,7 @@ export function ChatMessage({ message }: any) {
               );
             }
 
-            if (toolName === "compareMultipleAssets") {
+            /* if (toolName === "compareMultipleAssets") {
               console.log("toolInvocation", toolInvocation);
               const data = toolInvocation.result;
               //const followUpText = getFollowUpContent();
@@ -173,7 +184,51 @@ export function ChatMessage({ message }: any) {
                   ) : null}
                 </div>
               );
-            }
+            } */
+              
+              if (toolName === "compareMultipleAssets") {
+                const data = toolInvocation.result;
+                
+                if (state === "call" || isLoading) {
+                  return (
+                    <div key={toolCallId} className="py-3">
+                      <div className="flex items-center space-x-2 rounded-lg border bg-card p-4">
+                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+                        <p className="text-sm text-muted-foreground">
+                          Consultando dados dos ativos para comparação...
+                        </p>
+                      </div>
+                    </div>
+                  );
+                }
+                
+                // Verifica se há dados para exibir
+                if (!data || !Array.isArray(data) || data.length === 0) {
+                  return (
+                    <div key={toolCallId} className="py-3">
+                      <div className="rounded-lg border bg-card p-4">
+                        <p className="text-sm text-muted-foreground">
+                          Não foi possível obter dados para os ativos solicitados.
+                        </p>
+                      </div>
+                    </div>
+                  );
+                }
+                
+                return (
+                  <div key={toolCallId} className="py-3">
+                    <AreaChartComparation chartData={data} />
+                  </div>
+                );
+              } else {
+                return (
+                  <div key={toolCallId}>
+                    {toolName === "compareMultipleAssets" ? (
+                      <div>Buscando informações de comparação de ativos...</div>
+                    ) : null}
+                  </div>
+                );
+              }
           })}
         </div>
       </div>

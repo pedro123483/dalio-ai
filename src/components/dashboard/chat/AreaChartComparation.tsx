@@ -1,6 +1,7 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
+import { useMemo } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 import {
@@ -30,27 +31,31 @@ type DynamicChartConfig = {
 
 export function AreaChartComparation({ chartData }: { chartData: any[] }) {
   // Certifique-se de que chartData tenha pelo menos um item
-  const safeChartData = chartData?.length > 0 ? chartData : [{}];
+  const safeChartData = useMemo(() => {
+    return chartData?.length > 0 ? chartData : [{}];
+  }, [chartData]);
 
-  const chartConfig = Object.keys(safeChartData[0] || {})
-    .filter((key) => key !== "month")
-    .reduce(
-      (acc, key, index) => ({
-        ...acc,
-        [key]: {
-          label: key,
-          color: `hsl(var(--chart-${(index % 5) + 1}))`,
-        },
-      }),
-      {},
-    ) as DynamicChartConfig;
+  const chartConfig = useMemo(() => {
+    return Object.keys(safeChartData[0] || {})
+      .filter((key) => key !== "month")
+      .reduce(
+        (acc, key, index) => ({
+          ...acc,
+          [key]: {
+            label: key,
+            color: `hsl(var(--chart-${(index % 5) + 1}))`,
+          },
+        }),
+        {},
+      ) as DynamicChartConfig;
+  }, [safeChartData]);
 
   return (
-    <Card>
+    <Card className="w-[500px]">
       <CardHeader>
         <CardTitle>Comparativo de preços</CardTitle>
         <CardDescription>
-          Showing total visitors for the last 6 months
+          Mostrando a variação de preços dos ativos
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -69,14 +74,19 @@ export function AreaChartComparation({ chartData }: { chartData: any[] }) {
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              tickFormatter={(value) => (value ? value.slice(0, 3) : "")}
+              tickFormatter={(value) => {
+                if (!value) return "";
+                const date = new Date(value);
+                // Ajusta o mês para exibir corretamente
+                date.setMonth(date.getMonth());
+                return date.toLocaleDateString('pt-BR', { month: 'short' });
+              }}
             />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent indicator="line" />}
             />
             {Object.keys(chartConfig).map((key) => {
-              // Certifique-se de que chartConfig[key] existe
               const config = chartConfig[key];
               if (!config) return null;
 
@@ -100,7 +110,7 @@ export function AreaChartComparation({ chartData }: { chartData: any[] }) {
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-center gap-2 leading-none text-muted-foreground">
-              {safeChartData[0].month} - {safeChartData[safeChartData.length - 1].month}
+              {new Date(safeChartData[0].month).toLocaleDateString('pt-BR')} - {new Date(safeChartData[safeChartData.length - 1].month).toLocaleDateString('pt-BR')}
             </div>
           </div>
         </div>
