@@ -17,7 +17,7 @@ export function ChatInterface() {
 
   // Exemplos de perguntas que o usuário pode fazer
   const suggestions = [
-    "Como está o mercado hoje?",
+    "Compare btg e itau nos ultimos 5 anos",
     "Como está a ação do BTG Pactual?",
     "Busque na web as principais notícias do mercado brasileiro",
     "O que é um ETF?",

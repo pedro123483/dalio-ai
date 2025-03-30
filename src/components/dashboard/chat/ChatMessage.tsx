@@ -5,6 +5,7 @@ import { cn } from "~/lib/utils";
 import { Message } from "~/types/chat";
 import { useUser } from "@clerk/clerk-react";
 import { StockInfoCard } from "./StockInfoCard";
+import { AreaChartComparation } from "./AreaChartComparation";
 interface ChatMessageProps {
   message: Message;
 }
@@ -149,6 +150,26 @@ export function ChatMessage({ message }: any) {
                 <div key={toolCallId}>
                   {toolName === "getAssetQuote" ? (
                     <div>Buscando informações na bolsa...</div>
+                  ) : null}
+                </div>
+              );
+            }
+
+            if (toolName === "compareMultipleAssets") {
+              console.log("toolInvocation", toolInvocation);
+              const data = toolInvocation.result;
+              //const followUpText = getFollowUpContent();
+
+              return (
+                <div key={toolCallId}>
+                  <AreaChartComparation chartData={data} />
+                </div>
+              );
+            } else {
+              return (
+                <div key={toolCallId}>
+                  {toolName === "compareMultipleAssets" ? (
+                    <div>Buscando informações de comparação de ativos...</div>
                   ) : null}
                 </div>
               );
