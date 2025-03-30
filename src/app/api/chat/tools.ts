@@ -22,7 +22,7 @@ export const brapiQuoteTool = createTool({
 // Tool para comparação de múltiplos ativos (ações, FIIs, índices, criptomoedas)
 export const assetComparisonTool = createTool({
   description:
-    "Ferramenta para comparar o desempenho histórico de múltiplos ativos financeiros juntos (ações, fundos imobiliários, índices). Use esta ferramenta quando o usuário quiser comparar mais de um ativo em um mesmo gráfico.",
+    "Ferramenta para comparar o desempenho histórico de múltiplos ativos financeiros juntos (ações, fundos imobiliários, índices). Use esta ferramenta quando o usuário quiser comparar mais de um ativo em um mesmo gráfico. Após buscar os dados, forneça uma análise mais simples e direta sobre sua conclusão sobre os dados encontrados(seja breve e direto).",
   parameters: z.object({
     tickers: z
       .string()
@@ -92,7 +92,10 @@ export const assetComparisonTool = createTool({
           );
         }
 
-        return results;
+        return {
+          tickers,
+          results,
+        };
 
         //console.log("stockResponse", stockResponse.data);
       } catch (error) {

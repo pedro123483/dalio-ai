@@ -29,11 +29,16 @@ type DynamicChartConfig = {
   };
 };
 
-export function AreaChartComparation({ chartData }: { chartData: any[] }) {
+interface ChartData {
+  tickers: string;
+  results: any[];
+}
+
+export function AreaChartComparation({ tickers, results } : ChartData ) {
   // Certifique-se de que chartData tenha pelo menos um item
   const safeChartData = useMemo(() => {
-    return chartData?.length > 0 ? chartData : [{}];
-  }, [chartData]);
+    return results?.length > 0 ? results : [{}];
+  }, [results]);
 
   const chartConfig = useMemo(() => {
     return Object.keys(safeChartData[0] || {})
@@ -53,7 +58,7 @@ export function AreaChartComparation({ chartData }: { chartData: any[] }) {
   return (
     <Card className="w-[500px]">
       <CardHeader>
-        <CardTitle>Comparativo de preços</CardTitle>
+        <CardTitle>Comparativo de preços - {tickers}</CardTitle>
         <CardDescription>
           Mostrando a variação de preços dos ativos
         </CardDescription>
