@@ -22,6 +22,7 @@ import {
 import Link from "next/link";
 import { api } from "~/trpc/react";
 import { VisualWorkflow } from "~/components/landing/VisualWorkflow";
+import { StockList } from "~/components/StockList";
 
 const Landing = () => {
   const [email, setEmail] = useState("");
@@ -87,7 +88,9 @@ const Landing = () => {
 
           <div className="flex w-full max-w-md flex-col gap-4">
             <Link href="/sign-up">
-              <Button className="h-12 w-full text-lg">Criar conta gratuitamente</Button>
+              <Button className="h-12 w-full text-lg">
+                Criar conta gratuitamente
+              </Button>
             </Link>
           </div>
         </div>
@@ -366,9 +369,8 @@ const Landing = () => {
             Pronto para transformar sua análise financeira?
           </h2>
           <p className="mx-auto mb-10 max-w-3xl text-xl text-blue-100">
-            Crie sua conta e seja um dos primeiros a
-            experimentar o poder dos agentes de Inteligência Artificial no
-            mercado financeiro.
+            Crie sua conta e seja um dos primeiros a experimentar o poder dos
+            agentes de Inteligência Artificial no mercado financeiro.
           </p>
 
           <div className="flex justify-center">

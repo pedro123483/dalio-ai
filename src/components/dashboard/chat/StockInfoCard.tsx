@@ -1,7 +1,19 @@
-import { ArrowDown, ArrowUp, Minus } from "lucide-react";
+"use client";
+
+import {
+  ArrowDown,
+  ArrowUp,
+  Minus,
+  Download,
+  FileSpreadsheet,
+} from "lucide-react";
 import { Card, CardContent, CardHeader } from "~/components/ui/card";
 import { cn } from "~/lib/utils";
 import { Separator } from "~/components/ui/separator";
+import { Button } from "~/components/ui/button";
+import * as htmlToImage from "html-to-image";
+import * as XLSX from "xlsx";
+import { useRef } from "react";
 
 type StockData = {
   currency: string;
@@ -50,6 +62,62 @@ export function StockInfoCard({
   earningsPerShare,
   logourl,
 }: StockData) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleExportImage = async () => {
+    if (!cardRef.current) return;
+
+    try {
+      const dataUrl = await htmlToImage.toPng(cardRef.current, {
+        quality: 1.0,
+        pixelRatio: 2,
+        backgroundColor: "#ffffff",
+      });
+
+      // Criar link para download
+      const link = document.createElement("a");
+      link.download = `${symbol}_${new Date().toISOString().split("T")[0]}.png`;
+      link.href = dataUrl;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Erro ao exportar imagem:", error);
+    }
+  };
+
+  const handleExportExcel = () => {
+    try {
+      // Criar um novo workbook
+      const wb = XLSX.utils.book_new();
+
+      // Preparar os dados para a planilha
+      const wsData = [
+        ["Data", "Preço", "Variação (%)", "Volume"],
+        [
+          new Date(regularMarketTime).toLocaleDateString("pt-BR"),
+          regularMarketPrice,
+          regularMarketChangePercent,
+          regularMarketVolume,
+        ],
+      ];
+
+      // Criar a planilha
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+      // Adicionar a planilha ao workbook com o nome do símbolo
+      XLSX.utils.book_append_sheet(wb, ws, symbol);
+
+      // Gerar o arquivo Excel
+      XLSX.writeFile(
+        wb,
+        `${symbol}_${new Date().toISOString().split("T")[0]}.xlsx`,
+      );
+    } catch (error) {
+      console.error("Erro ao exportar Excel:", error);
+    }
+  };
+
   const formatDate = (dateString: string) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
@@ -76,7 +144,29 @@ export function StockInfoCard({
   const isNeutral = regularMarketChange === 0;
 
   return (
-    <Card className="w-full max-w-md overflow-hidden rounded-lg border bg-white shadow-sm">
+    <Card
+      ref={cardRef}
+      className="relative w-full max-w-md overflow-hidden rounded-lg border bg-white shadow-sm"
+    >
+      <div className="absolute right-2 top-2 z-10 flex gap-2">
+        <Button
+          onClick={handleExportExcel}
+          variant="outline"
+          size="sm"
+          className="h-8 w-8 p-0"
+        >
+          <FileSpreadsheet className="h-4 w-4" />
+        </Button>
+        <Button
+          onClick={handleExportImage}
+          variant="outline"
+          size="sm"
+          className="h-8 w-8 p-0"
+        >
+          <Download className="h-4 w-4" />
+        </Button>
+      </div>
+
       <CardHeader className="flex flex-row items-center gap-3 px-4 pb-2 pt-4">
         {logourl && (
           <img
