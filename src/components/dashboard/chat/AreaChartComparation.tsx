@@ -51,7 +51,10 @@ interface AreaChartComparationProps {
   results: any[];
 }
 
-export function AreaChartComparation({ tickers, results }: AreaChartComparationProps) {
+export function AreaChartComparation({
+  tickers,
+  results,
+}: AreaChartComparationProps) {
   const chartRef = useRef<HTMLDivElement>(null);
 
   // Certifique-se de que chartData tenha pelo menos um item
@@ -101,13 +104,23 @@ export function AreaChartComparation({ tickers, results }: AreaChartComparationP
   }, [safeChartData]);
 
   return (
-    <div className="relative">
-      <Card className="w-[500px]">
-        <CardHeader>
-          <CardTitle>Comparativo de preços</CardTitle>
-          <CardDescription>
-            Mostrando a variação de preços dos ativos
-          </CardDescription>
+    <div className="relative w-full max-w-[500px]">
+      <Card className="relative w-full">
+        <CardHeader className="relative">
+          <div className="flex items-start justify-between">
+            <div>
+              <CardTitle>Comparativo de preços</CardTitle>
+              <CardDescription>
+                Mostrando a variação de preços dos ativos
+              </CardDescription>
+            </div>
+            <DownloadButtons
+              chartRef={chartRef}
+              data={exportData}
+              symbol="comparativo_precos"
+              title="Comparativo de Preços"
+            />
+          </div>
         </CardHeader>
         <CardContent ref={chartRef}>
           <ChartContainer config={chartConfig}>
@@ -214,12 +227,6 @@ export function AreaChartComparation({ tickers, results }: AreaChartComparationP
           </div>
         </CardFooter>
       </Card>
-      <DownloadButtons
-        chartRef={chartRef}
-        data={exportData}
-        symbol="comparativo_precos"
-        title="Comparativo de Preços"
-      />
     </div>
   );
 }
