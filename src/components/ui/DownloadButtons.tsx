@@ -97,7 +97,7 @@ export function DownloadButtons({
 
   return (
     <TooltipProvider>
-      <div className="download-buttons absolute right-2 top-2 z-50 flex gap-2">
+      <div className="download-buttons absolute right-2 top-2 z-[100] flex gap-2">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
