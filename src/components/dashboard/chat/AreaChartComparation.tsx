@@ -46,13 +46,18 @@ const CHART_COLORS = [
   "#ea580c", // laranja
 ];
 
-export function AreaChartComparation({ chartData }: { chartData: any[] }) {
+interface AreaChartComparationProps {
+  tickers: string;
+  results: any[];
+}
+
+export function AreaChartComparation({ tickers, results }: AreaChartComparationProps) {
   const chartRef = useRef<HTMLDivElement>(null);
 
   // Certifique-se de que chartData tenha pelo menos um item
   const safeChartData = useMemo(() => {
-    return chartData?.length > 0 ? chartData : [{}];
-  }, [chartData]);
+    return results?.length > 0 ? results : [{}];
+  }, [results]);
 
   const chartConfig = useMemo(() => {
     return Object.keys(safeChartData[0] || {})

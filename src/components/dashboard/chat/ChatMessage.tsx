@@ -140,17 +140,8 @@ export function ChatMessage({ message }: any) {
                     <div className="mt-3 rounded-lg border bg-slate-50 p-3 text-sm">
                       <p className="font-medium text-slate-700">Análise:</p>
                       <div className="prose prose-sm text-slate-600">
-                        {followUpText ? (
-                          <p>{followUpText}</p>
-                        ) : (
-                          <p>
-                            O ativo {data.symbol} está cotado a{" "}
-                            {data.regularMarketPrice} {data.currency}, com
-                            variação de{" "}
-                            {data.regularMarketChangePercent.toFixed(2)}% em
-                            relação ao preço anterior.
-                          </p>
-                        )}
+                        {followUpText &&
+                          <p>{followUpText}</p>}
                       </div>
                     </div>
                   </div>
@@ -165,29 +156,10 @@ export function ChatMessage({ message }: any) {
                 </div>
               );
             }
-
-            /* if (toolName === "compareMultipleAssets") {
-              console.log("toolInvocation", toolInvocation);
-              const data = toolInvocation.result;
-              //const followUpText = getFollowUpContent();
-
-              return (
-                <div key={toolCallId}>
-                  <AreaChartComparation chartData={data} />
-                </div>
-              );
-            } else {
-              return (
-                <div key={toolCallId}>
-                  {toolName === "compareMultipleAssets" ? (
-                    <div>Buscando informações de comparação de ativos...</div>
-                  ) : null}
-                </div>
-              );
-            } */
               
               if (toolName === "compareMultipleAssets") {
-                const data = toolInvocation.result;
+                const data: { tickers: string; results: any[] } | undefined = toolInvocation.result;
+                const followUpText = getFollowUpContent();
                 
                 if (state === "call" || isLoading) {
                   return (
@@ -203,7 +175,7 @@ export function ChatMessage({ message }: any) {
                 }
                 
                 // Verifica se há dados para exibir
-                if (!data || !Array.isArray(data) || data.length === 0) {
+                if (!data?.results || !Array.isArray(data.results) || data.results.length === 0) {
                   return (
                     <div key={toolCallId} className="py-3">
                       <div className="rounded-lg border bg-card p-4">
@@ -217,7 +189,15 @@ export function ChatMessage({ message }: any) {
                 
                 return (
                   <div key={toolCallId} className="py-3">
-                    <AreaChartComparation chartData={data} />
+                    <AreaChartComparation tickers={data.tickers} results={data.results} />
+                    {/* Área para o texto explicativo do LLM abaixo do componente */}
+                    <div className="mt-3 rounded-lg border bg-slate-50 p-3 text-sm">
+                      <p className="font-medium text-slate-700">Análise:</p>
+                      <div className="prose prose-sm text-slate-600">
+                        {followUpText &&
+                          <p>{followUpText}</p>}
+                      </div>
+                    </div>
                   </div>
                 );
               } else {

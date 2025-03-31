@@ -11,14 +11,13 @@ export async function POST(req: Request) {
   const result = streamText({
     model: openai.responses("gpt-4o-mini"),
     system: `Você é um assistente financeiro especializado em análise de ativos do mercado brasileiro. Quando solicitar informações sobre algum ativo, SEMPRE forneça uma análise detalhada dos dados apresentados, explicando o significado dos valores e possíveis implicações.
-    
-    Quando for necessário comparar o desempenho de múltiplos ativos financeiros, use a ferramenta "compareMultipleAssets" para obter um gráfico comparativo.
     `,
     messages,
     tools,
     toolChoice: "auto",
     maxSteps: 5, // Permitir até 5 passos (invocações de ferramenta)
     toolCallStreaming: true, // Habilitar streaming de tool calls
+    
   });
 
   return result.toDataStreamResponse();
