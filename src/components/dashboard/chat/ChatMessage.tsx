@@ -7,6 +7,9 @@ import { useUser } from "@clerk/clerk-react";
 import { StockInfoCard } from "./StockInfoCard";
 import { AreaChartComparation } from "./AreaChartComparation";
 import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import rehypeHighlight from "rehype-highlight";
 interface ChatMessageProps {
   message: Message;
 }
@@ -44,7 +47,14 @@ export function ChatMessage({ message }: any) {
             .join(" ");
 
           if (textPartsAfterTool.trim().length > 0) {
-            return textPartsAfterTool.trim();
+            return (
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                rehypePlugins={[rehypeHighlight]}
+              >
+                {textPartsAfterTool.trim()}
+              </ReactMarkdown>
+            );
           }
         }
       }
@@ -63,7 +73,14 @@ export function ChatMessage({ message }: any) {
           lastInvocationIndex + "getAssetQuote".length,
         );
         if (textAfterInvocation && textAfterInvocation.trim().length > 0) {
-          return textAfterInvocation.trim();
+          return (
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeHighlight]}
+            >
+              {textAfterInvocation.trim()}
+            </ReactMarkdown>
+          );
         }
       }
     }
@@ -103,7 +120,12 @@ export function ChatMessage({ message }: any) {
           {/* Oculta o conteúdo bruto da mensagem que contém chamadas de ferramentas */}
           {(!message.toolInvocations ||
             message.toolInvocations.length === 0) && (
-            <p className="break-words">{message.content}</p>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              rehypePlugins={[rehypeHighlight]}
+            >
+              {message.content}
+            </ReactMarkdown>
           )}
           <div className="mt-1 text-right">
             <span className="text-xs text-muted-foreground">
@@ -140,8 +162,7 @@ export function ChatMessage({ message }: any) {
                     <div className="mt-3 rounded-lg border bg-slate-50 p-3 text-sm">
                       <p className="font-medium text-slate-700">Análise:</p>
                       <div className="prose prose-sm text-slate-600">
-                        {followUpText &&
-                          <p>{followUpText}</p>}
+                        {followUpText}
                       </div>
                     </div>
                   </div>
@@ -156,59 +177,66 @@ export function ChatMessage({ message }: any) {
                 </div>
               );
             }
-              
-              if (toolName === "compareMultipleAssets") {
-                const data: { tickers: string; results: any[] } | undefined = toolInvocation.result;
-                const followUpText = getFollowUpContent();
-                
-                if (state === "call" || isLoading) {
-                  return (
-                    <div key={toolCallId} className="py-3">
-                      <div className="flex items-center space-x-2 rounded-lg border bg-card p-4">
-                        <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
-                        <p className="text-sm text-muted-foreground">
-                          Consultando dados dos ativos para comparação...
-                        </p>
-                      </div>
-                    </div>
-                  );
-                }
-                
-                // Verifica se há dados para exibir
-                if (!data?.results || !Array.isArray(data.results) || data.results.length === 0) {
-                  return (
-                    <div key={toolCallId} className="py-3">
-                      <div className="rounded-lg border bg-card p-4">
-                        <p className="text-sm text-muted-foreground">
-                          Não foi possível obter dados para os ativos solicitados.
-                        </p>
-                      </div>
-                    </div>
-                  );
-                }
-                
+
+            if (toolName === "compareMultipleAssets") {
+              const data: { tickers: string; results: any[] } | undefined =
+                toolInvocation.result;
+              const followUpText = getFollowUpContent();
+
+              if (state === "call" || isLoading) {
                 return (
                   <div key={toolCallId} className="py-3">
-                    <AreaChartComparation tickers={data.tickers} results={data.results} />
-                    {/* Área para o texto explicativo do LLM abaixo do componente */}
-                    <div className="mt-3 rounded-lg border bg-slate-50 p-3 text-sm">
-                      <p className="font-medium text-slate-700">Análise:</p>
-                      <div className="prose prose-sm text-slate-600">
-                        {followUpText &&
-                          <p>{followUpText}</p>}
-                      </div>
+                    <div className="flex items-center space-x-2 rounded-lg border bg-card p-4">
+                      <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+                      <p className="text-sm text-muted-foreground">
+                        Consultando dados dos ativos para comparação...
+                      </p>
                     </div>
-                  </div>
-                );
-              } else {
-                return (
-                  <div key={toolCallId}>
-                    {toolName === "compareMultipleAssets" ? (
-                      <div>Buscando informações de comparação de ativos...</div>
-                    ) : null}
                   </div>
                 );
               }
+
+              // Verifica se há dados para exibir
+              if (
+                !data?.results ||
+                !Array.isArray(data.results) ||
+                data.results.length === 0
+              ) {
+                return (
+                  <div key={toolCallId} className="py-3">
+                    <div className="rounded-lg border bg-card p-4">
+                      <p className="text-sm text-muted-foreground">
+                        Não foi possível obter dados para os ativos solicitados.
+                      </p>
+                    </div>
+                  </div>
+                );
+              }
+
+              return (
+                <div key={toolCallId} className="py-3">
+                  <AreaChartComparation
+                    tickers={data.tickers}
+                    results={data.results}
+                  />
+                  {/* Área para o texto explicativo do LLM abaixo do componente */}
+                  <div className="mt-3 rounded-lg border bg-slate-50 p-3 text-sm">
+                    <p className="font-medium text-slate-700">Análise:</p>
+                    <div className="prose prose-sm text-slate-600">
+                      {followUpText}
+                    </div>
+                  </div>
+                </div>
+              );
+            } else {
+              return (
+                <div key={toolCallId}>
+                  {toolName === "compareMultipleAssets" ? (
+                    <div>Buscando informações de comparação de ativos...</div>
+                  ) : null}
+                </div>
+              );
+            }
           })}
         </div>
       </div>

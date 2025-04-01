@@ -42,6 +42,7 @@ export const assetComparisonTool = createTool({
   }),
 
   execute: async function ({ tickers, range, interval }) {
+    console.log("tickers", tickers);
     if (tickers && tickers.trim() !== "") {
       try {
         // Valores padrão mais leves
