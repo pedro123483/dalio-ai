@@ -30,7 +30,7 @@ export function ChatInterface() {
   }, [messages]);
 
   return (
-    <div className="container flex h-[calc(100vh-5rem)] flex-col overflow-hidden rounded-lg border bg-card">
+    <div className="flex h-[calc(100vh-5rem)] w-full flex-col overflow-hidden rounded-lg border bg-card">
       <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
         <div className="mb-4 space-y-4">
           {messages.map((message) => (
