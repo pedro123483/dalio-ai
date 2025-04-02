@@ -17,8 +17,8 @@ export function ChatInterface() {
 
   // Exemplos de perguntas que o usuário pode fazer
   const suggestions = [
-    "Compare Magalu e Banco do Brasil nos últimos 6 meses",
-    "Como está a ação do BTG Pactual hoje?",
+    "Compare BTG e Itaú no último ano",
+    "Como está a ação da Magalu hoje?",
     "Qual o desempenho do Ibovespa vs S&P 500?",
     "Compare os fundos XPML11 e BTLG11 nos últimos 3 meses",
   ];
