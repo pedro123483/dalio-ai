@@ -106,10 +106,10 @@ export function ChatMessage({ message }: any) {
         message.role === "user" ? "justify-end" : "justify-start",
       )}
     >
-      <div className="flex max-w-[80%] items-start gap-3">
+      <div className="flex max-w-[95%] items-start gap-2 sm:max-w-[80%] sm:gap-3">
         {message.role === "assistant" && (
-          <div className="mt-0.5 flex h-8 w-8 min-w-8 items-center justify-center rounded-full bg-blue-600">
-            <BotIcon size={16} className="text-white" />
+          <div className="mt-0.5 flex h-6 w-6 min-w-6 items-center justify-center rounded-full bg-blue-600 sm:h-8 sm:w-8 sm:min-w-8">
+            <BotIcon size={14} className="text-white sm:text-base" />
           </div>
         )}
         <div
@@ -138,11 +138,11 @@ export function ChatMessage({ message }: any) {
           </div>
         </div>
         {message.role === "user" && (
-          <div className="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-secondary">
+          <div className="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-secondary sm:h-8 sm:w-8">
             <img
               className="rounded-full"
-              height={30}
-              width={30}
+              height={24}
+              width={24}
               src={user?.imageUrl ?? undefined}
             />
           </div>
@@ -162,14 +162,14 @@ export function ChatMessage({ message }: any) {
                 return (
                   <div key={toolCallId}>
                     <IncomeStatementCard {...data} />
-                     {/* Área para o texto explicativo do LLM abaixo do componente */}
-                     <div className="mt-3 rounded-lg border bg-slate-50 p-3 text-sm">
+                    {/* Área para o texto explicativo do LLM abaixo do componente */}
+                    <div className="mt-3 rounded-lg border bg-slate-50 p-3 text-sm">
                       <p className="font-medium text-slate-700">Análise:</p>
                       <div className="prose prose-sm text-slate-600">
                         {followUpText}
                       </div>
                     </div>
-                  </div>                
+                  </div>
                 );
               }
             } else {
