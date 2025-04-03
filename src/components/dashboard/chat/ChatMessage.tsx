@@ -6,6 +6,7 @@ import { Message } from "~/types/chat";
 import { useUser } from "@clerk/clerk-react";
 import { StockInfoCard } from "./StockInfoCard";
 import { AreaChartComparation } from "./AreaChartComparation";
+import { IncomeStatementCard } from "./IncomeStatementCard";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -150,6 +151,36 @@ export function ChatMessage({ message }: any) {
         <div>
           {message.toolInvocations?.map((toolInvocation: any) => {
             const { toolName, toolCallId, state } = toolInvocation;
+
+            if (state === "result") {
+              if (toolName === "getIncomeStatement") {
+                const data = toolInvocation.result;
+                const followUpText = getFollowUpContent();
+
+                console.log("data", data);
+
+                return (
+                  <div key={toolCallId}>
+                    <IncomeStatementCard {...data} />
+                     {/* Área para o texto explicativo do LLM abaixo do componente */}
+                     <div className="mt-3 rounded-lg border bg-slate-50 p-3 text-sm">
+                      <p className="font-medium text-slate-700">Análise:</p>
+                      <div className="prose prose-sm text-slate-600">
+                        {followUpText}
+                      </div>
+                    </div>
+                  </div>                
+                );
+              }
+            } else {
+              return (
+                <div key={toolCallId}>
+                  {toolName === "getAssetQuote" ? (
+                    <div>Buscando informações na internet...</div>
+                  ) : null}
+                </div>
+              );
+            }
             if (state === "result") {
               if (toolName === "getAssetQuote") {
                 const data = toolInvocation.result.results[0];

@@ -30,8 +30,10 @@ const Index = () => {
   if (!mounted) return null;
 
   return (
-    <div className={cn("flex min-h-screen flex-col bg-background", isMobile ? "px-5" : "px-10")}>
-      <Navbar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+    <div className="flex min-h-screen flex-col bg-background">
+      <div className={cn("px-4", isMobile ? "sm:px-5" : "sm:px-10")}>
+        <Navbar toggleSidebar={toggleSidebar} sidebarOpen={sidebarOpen} />
+      </div>
 
       <div className="flex flex-1 overflow-hidden">
         {/* <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} /> */}
@@ -43,7 +45,12 @@ const Index = () => {
           )}
         >
           <div className="h-full py-4">
-            <div className="h-full w-full">
+            <div
+              className={cn(
+                "h-full w-full",
+                isMobile ? "px-4 sm:px-5" : "px-4 sm:px-10",
+              )}
+            >
               <ChatInterface />
             </div>
           </div>

@@ -26,8 +26,8 @@ export function Navbar({ toggleSidebar, sidebarOpen }: NavbarProps) {
 
   return (
     <header className="w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
-        <div className="mr-4 flex items-center">
+      <div className="flex h-14 w-full items-center px-0">
+        <div className="flex items-center">
           {/* <Button 
             variant="ghost" 
             size="icon" 
@@ -44,7 +44,7 @@ export function Navbar({ toggleSidebar, sidebarOpen }: NavbarProps) {
           </div>
         </div>
 
-        <div className="flex flex-1 items-center justify-end space-x-2">
+        <div className="flex flex-1 items-center justify-end">
           <Button
             variant="outline"
             size="icon"

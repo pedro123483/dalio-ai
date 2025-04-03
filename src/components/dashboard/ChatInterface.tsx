@@ -17,10 +17,10 @@ export function ChatInterface() {
 
   // Exemplos de perguntas que o usuário pode fazer
   const suggestions = [
+    "Qual o resultado financeiro da Petrobras em 2024?",
     "Compare BTG e Itaú no último ano",
+    "Compare BTLG11 e XPML11 nos últimos 6 meses",
     "Como está a ação da Magalu hoje?",
-    "Qual o desempenho do Ibovespa vs S&P 500?",
-    "Compare os fundos XPML11 e BTLG11 nos últimos 3 meses",
   ];
 
   useEffect(() => {

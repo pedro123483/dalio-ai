@@ -107,8 +107,35 @@ export const assetComparisonTool = createTool({
   },
 });
 
+export const incomeStatementTool = createTool({
+  description: "Buscar demonstrativo de resultados financeiros de uma empresa. Demonstrativo de Resultados Histórico: O demonstrativo de resultados é um dos principais demonstrativos financeiros de uma empresa que mostra as receitas e despesas durante um período de tempo.",
+  parameters: z.object({
+    ticker: z.string().describe("Ticker da empresa a ser buscado"),
+    endDate: z.string().describe("Data final do período a ser buscado. Ex: 2024-12-31, se a pessoa quiser os dados do ano de 2024, 2023-12-31 para 2023, etc."),
+  }),
+
+  execute: async function ({ ticker, endDate }) {
+    const { data } = await axios.get(
+      `https://brapi.dev/api/quote/${ticker}?modules=incomeStatementHistory&token=${process.env.BRAPI_API_KEY}`,
+    );
+
+    for (const item of data.results[0].incomeStatementHistory) {
+      if (item.endDate === endDate) {
+        return {
+          ...item,
+          ticker: ticker,
+        };
+      }
+    }
+
+    return { error: "Nenhum dado encontrado para o período informado" };
+  },
+});
+
+
 export const tools = {
   getAssetQuote: brapiQuoteTool,
   compareMultipleAssets: assetComparisonTool,
+  getIncomeStatement: incomeStatementTool,
   web_search_preview: openai.tools.webSearchPreview(),
 };
