@@ -168,13 +168,15 @@ export function AreaChartComparation({
   }, [safeChartData]);
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full max-w-full overflow-hidden">
       <Card className="relative w-full">
-        <CardHeader className="relative">
-          <div className="flex items-start justify-between">
+        <CardHeader className="relative p-2 sm:p-4">
+          <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:gap-4">
             <div>
-              <CardTitle>Comparativo de preços</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-base sm:text-lg">
+                Comparativo de preços
+              </CardTitle>
+              <CardDescription className="text-sm">
                 Mostrando a variação de preços dos ativos
               </CardDescription>
             </div>
@@ -186,10 +188,14 @@ export function AreaChartComparation({
             />
           </div>
         </CardHeader>
-        <CardContent ref={chartRef}>
+        <CardContent ref={chartRef} className="p-2 sm:p-4">
           <div className="h-full w-full">
             <ChartContainer config={chartConfig}>
-              <ResponsiveContainer width="100%" height={300} aspect={undefined}>
+              <ResponsiveContainer
+                width="100%"
+                height={window.innerWidth < 640 ? 200 : 300}
+                aspect={undefined}
+              >
                 <AreaChart
                   accessibilityLayer
                   data={safeChartData}
@@ -233,7 +239,10 @@ export function AreaChartComparation({
                   <XAxis
                     dataKey="month"
                     stroke="#64748b"
-                    tick={{ fill: "#64748b" }}
+                    tick={{
+                      fill: "#64748b",
+                      fontSize: window.innerWidth < 640 ? 10 : 12,
+                    }}
                     tickLine={false}
                     axisLine={false}
                     tickMargin={8}
@@ -241,7 +250,10 @@ export function AreaChartComparation({
                   />
                   <YAxis
                     stroke="#64748b"
-                    tick={{ fill: "#64748b" }}
+                    tick={{
+                      fill: "#64748b",
+                      fontSize: window.innerWidth < 640 ? 10 : 12,
+                    }}
                     tickLine={false}
                     axisLine={false}
                     tickMargin={8}
@@ -275,8 +287,8 @@ export function AreaChartComparation({
             </ChartContainer>
           </div>
         </CardContent>
-        <CardFooter>
-          <div className="flex w-full items-start gap-2 text-sm">
+        <CardFooter className="p-2 sm:p-4">
+          <div className="flex w-full items-start gap-2 text-xs sm:text-sm">
             <div className="grid gap-2">
               <div className="flex items-center gap-2 leading-none text-muted-foreground">
                 {safeChartData[0]?.month

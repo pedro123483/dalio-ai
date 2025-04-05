@@ -5,16 +5,21 @@ interface ChatSuggestionsProps {
   onSelectSuggestion: (suggestion: string) => void;
 }
 
-export function ChatSuggestions({ suggestions, onSelectSuggestion }: ChatSuggestionsProps) {
+export function ChatSuggestions({
+  suggestions,
+  onSelectSuggestion,
+}: ChatSuggestionsProps) {
   return (
     <div className="mb-8">
-      <h3 className="text-sm font-medium text-center mb-3">Sugestões de perguntas</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <h3 className="mb-3 text-center text-sm font-medium">
+        Sugestões de perguntas
+      </h3>
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {suggestions.map((suggestion, index) => (
           <Button
             key={index}
             variant="outline"
-            className="h-auto justify-start py-2 px-3 text-sm text-left"
+            className="h-auto justify-start px-3 py-2 text-left text-sm"
             onClick={() => onSelectSuggestion(suggestion)}
           >
             {suggestion}
