@@ -9,7 +9,7 @@ import { ptBR } from "@clerk/localizations";
 
 export const metadata: Metadata = {
   title: "Dalio AI",
-  description: "Seu agente de análise financeira",
+  description: "O futuro do mercado financeiro começa aqui",
 };
 
 export default function RootLayout({
