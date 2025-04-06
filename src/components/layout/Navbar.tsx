@@ -3,7 +3,7 @@ import { MessageSquare, User, Menu, X, LogOut } from "lucide-react";
 import { useIsMobile } from "~/hooks/use-mobile";
 import { cn } from "~/lib/utils";
 import { toast } from "sonner";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { useClerk } from "@clerk/nextjs";
 
 type NavbarProps = {
