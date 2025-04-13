@@ -6,6 +6,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 import { Toaster } from "sonner";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ptBR } from "@clerk/localizations";
+import { Sidebar } from "~/components/layout/Sidebar";
 
 export const metadata: Metadata = {
   title: "Dalio AI",
