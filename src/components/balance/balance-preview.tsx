@@ -15,8 +15,8 @@ export function BalancePreview() {
   const handleDownload = () => {
     // Simulação de download
     const link = document.createElement("a")
-    link.href = "/sample-balance-sheet.pdf" // Caminho fictício
-    link.download = "balanco-petrobras-2023.pdf"
+    link.href = "https://balance-dalio-ai.s3.us-east-2.amazonaws.com/balanco-btg-3t24.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIA2F5UJPFBT3QBUDPH%2F20250414%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20250414T012407Z&X-Amz-Expires=3600&X-Amz-Signature=05717a9bbec8f35f0c94c4733f4b6544dc510b1c0b256126e7c978519253e594&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject" // Caminho fictício
+    link.download = "https://balance-dalio-ai.s3.us-east-2.amazonaws.com/balanco-btg-3t24.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIA2F5UJPFBT3QBUDPH%2F20250414%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20250414T012407Z&X-Amz-Expires=3600&X-Amz-Signature=05717a9bbec8f35f0c94c4733f4b6544dc510b1c0b256126e7c978519253e594&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -68,7 +68,7 @@ export function BalancePreview() {
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <img
-              src="/placeholder.svg?height=400&width=300"
+              src="https://balance-dalio-ai.s3.us-east-2.amazonaws.com/balanco-btg-3t24.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIA2F5UJPFBT3QBUDPH%2F20250414%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20250414T012407Z&X-Amz-Expires=3600&X-Amz-Signature=05717a9bbec8f35f0c94c4733f4b6544dc510b1c0b256126e7c978519253e594&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject"
               alt="Prévia do Balanço"
               className="object-contain"
               style={{ transform: `scale(${zoomLevel / 100})` }}

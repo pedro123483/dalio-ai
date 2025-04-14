@@ -1,43 +1,55 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Search, Loader2 } from "lucide-react"
-import { Button } from "~/components/ui/button"
-import { Input } from "~/components/ui/input"
-import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group"
-import { Label } from "~/components/ui/label"
+import { useState } from "react";
+import { Search, Loader2 } from "lucide-react";
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
+import { Label } from "~/components/ui/label";
 import { toast } from "sonner";
+import { api } from "~/trpc/react";
 
 export function SearchBalanceForm() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [searchType, setSearchType] = useState("name")
-  const [isLoading, setIsLoading] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchType, setSearchType] = useState("name");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const balanceId = 1; // ID do balanço a ser buscado
+  const { data: balanceUrl, isLoading: isLoadingBalance } =
+    api.balance.getBalanceUrl.useQuery({ balanceId });
+
+  console.log(balanceUrl);
 
   const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!searchTerm.trim()) {
       toast.error("Campo obrigatório", {
         description: "Por favor, informe o nome ou CNPJ da empresa",
-      })
-      return
+      });
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     // Simulação de busca
     setTimeout(() => {
-      setIsLoading(false)
-      toast.success(`Balanço da empresa ${searchTerm} carregado com sucesso`)
-    }, 1500)
-  }
+      setIsLoading(false);
+      toast.success(`Balanço da empresa ${searchTerm} carregado com sucesso`);
+    }, 1500);
+  };
 
   return (
     <form onSubmit={handleSearch} className="space-y-4">
       <div className="space-y-2">
-        <RadioGroup defaultValue="name" value={searchType} onValueChange={setSearchType} className="flex space-x-4">
+        <RadioGroup
+          defaultValue="name"
+          value={searchType}
+          onValueChange={setSearchType}
+          className="flex space-x-4"
+        >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="name" id="name" />
             <Label htmlFor="name">Nome da Empresa</Label>
@@ -54,7 +66,9 @@ export function SearchBalanceForm() {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="text"
-            placeholder={searchType === "name" ? "Ex: Petrobras" : "Ex: 33.000.167/0001-01"}
+            placeholder={
+              searchType === "name" ? "Ex: Petrobras" : "Ex: 33.000.167/0001-01"
+            }
             className="pl-8"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -101,5 +115,5 @@ export function SearchBalanceForm() {
         </div>
       </div>
     </form>
-  )
+  );
 }
