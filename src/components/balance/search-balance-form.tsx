@@ -16,11 +16,11 @@ export function SearchBalanceForm() {
   const [searchType, setSearchType] = useState("name");
   const [isLoading, setIsLoading] = useState(false);
 
-  const balanceId = 1; // ID do balanço a ser buscado
+  /*const balanceId = 1; // ID do balanço a ser buscado
   const { data: balanceUrl, isLoading: isLoadingBalance } =
     api.balance.getBalanceUrl.useQuery({ balanceId });
 
-  console.log(balanceUrl);
+  console.log(balanceUrl);*/
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

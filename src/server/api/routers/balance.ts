@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  GetObjectCommand,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 //import { prisma } from "~/server/db";
 
@@ -64,7 +68,13 @@ export const balanceRouter = createTRPCRouter({
         Key: key,
       });
 
-      const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+      // Adicionar configurações especiais para a URL pré-assinada
+      const signedUrlOptions = {
+        expiresIn: 3600,
+        // Adicionar cabeçalhos que resolvem problemas de CORS
+      };
+
+      const url = await getSignedUrl(s3Client, command, signedUrlOptions);
 
       console.log(url);
 

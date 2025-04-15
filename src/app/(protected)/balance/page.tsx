@@ -25,8 +25,8 @@ const Balance = () => {
               {/* Card que muda conforme a seleção do usuário */}
               <SearchAndUploadCard />
     
-              <div className="grid gap-4 md:grid-cols-2">
-                <Card className="md:col-span-1">
+              <div className="grid gap-4 md:grid-cols-2 w-full">
+                <Card className="md:col-span-2">
                   <CardHeader>
                     <CardTitle>Balanço Patrimonial</CardTitle>
                     <CardDescription>Visualização do documento</CardDescription>
