@@ -28,6 +28,34 @@ export function BalancePreview() {
   if (isLoading) return <div>Carregando...</div>;
   if (!data?.url) return <div>PDF não encontrado</div>;
 
+  const handleDownload = async () => {
+    if (!data?.url) return;
+  
+    try {
+      // Faz requisição para a URL pré-assinada
+      const response = await fetch(data.url);
+      if (!response.ok) throw new Error("Falha ao baixar o PDF");
+  
+      // Converte a resposta em Blob
+      const blob = await response.blob();
+  
+      // Cria um link temporário para o download
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `balanco_.pdf`; // Nome do arquivo dinâmico
+      document.body.appendChild(link);
+      link.click();
+  
+      // Limpa o link temporário
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Erro ao baixar o PDF:", error);
+      alert("Não foi possível baixar o PDF. Tente novamente.");
+    }
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="mb-4 text-2xl font-bold">Balanço Financeiro</h1>
@@ -61,6 +89,16 @@ export function BalancePreview() {
           className="rounded bg-blue-500 px-4 py-2 text-white disabled:bg-gray-300"
         >
           Próxima
+        </button>
+      </div>
+
+      <div className="mt-4">
+        <button
+          onClick={handleDownload}
+          disabled={!data?.url}
+          className="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg disabled:bg-gray-300 hover:bg-green-600 transition"
+        >
+          Baixar PDF
         </button>
       </div>
     </div>
