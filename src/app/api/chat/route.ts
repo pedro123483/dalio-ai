@@ -8,8 +8,10 @@ export const maxDuration = 30;
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
+  console.log("messages", messages);
+
   const result = streamText({
-    model: openai.responses("gpt-4o-mini"),
+    model: openai.responses("gpt-4o"),
     system: `Você é um assistente financeiro especializado em análise de ativos do mercado brasileiro. Quando solicitar informações sobre algum ativo, SEMPRE forneça uma análise detalhada dos dados apresentados, explicando o significado dos valores e possíveis implicações.
 
     Lista de indices que o usuário pode querer perguntar(o simbolo e o que ele representa):
@@ -85,8 +87,8 @@ export async function POST(req: Request) {
     messages,
     tools,
     toolChoice: "auto",
-    maxSteps: 5, // Permitir até 5 passos (invocações de ferramenta)
-    toolCallStreaming: true, // Habilitar streaming de tool calls
+    maxSteps: 5,
+    toolCallStreaming: true,
     
   });
 

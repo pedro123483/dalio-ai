@@ -4,6 +4,7 @@ import {
   S3Client,
   PutObjectCommand,
   GetObjectCommand,
+  ListObjectsV2Command,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 //import { prisma } from "~/server/db";
@@ -52,32 +53,97 @@ export const balanceRouter = createTRPCRouter({
       }),*/
 
   getBalanceUrl: publicProcedure
-    .input(z.object({ balanceId: z.number() }))
+    .input(z.object({
+      company: z.string(),
+      year: z.string(),
+      period: z.string()
+    }))
     .query(async ({ input }) => {
-      /*const balance = await prisma.balance.findUnique({
-        where: { id: input.balanceId },
-      });*/
-
-      //if (!balance) throw new Error("Balance not found");
-
-      //const key = `balances/${balance.companyId}_${balance.year}.pdf`;
-      const key = `balanco-btg-3t24.pdf`;
+      const { company, year, period } = input;
+      const key = `balances/${company}/${year}/${period}.pdf`;
 
       const command = new GetObjectCommand({
-        Bucket: process.env.S3_BUCKET,
+        Bucket: process.env.S3_BUCKET!,
         Key: key,
       });
 
-      // Adicionar configurações especiais para a URL pré-assinada
       const signedUrlOptions = {
         expiresIn: 3600,
-        // Adicionar cabeçalhos que resolvem problemas de CORS
       };
 
       const url = await getSignedUrl(s3Client, command, signedUrlOptions);
-
-      console.log(url);
-
       return { url };
+    }),
+
+  listCompanies: publicProcedure
+    .query(async () => {
+      // Listar todos os prefixos (empresas) na pasta balances/
+      const command = new ListObjectsV2Command({
+        Bucket: process.env.S3_BUCKET!,
+        Prefix: "balances/",
+        Delimiter: "/"
+      });
+
+      const response = await s3Client.send(command);
+
+      // Extrair nomes das empresas dos prefixos
+      const companies = response.CommonPrefixes?.map(prefix => {
+        const name = prefix.Prefix?.replace("balances/", "").replace("/", "");
+        return { name };
+      }) || [];
+
+      return companies;
+    }),
+
+  listAvailableYears: publicProcedure
+    .input(z.object({ company: z.string() }))
+    .query(async ({ input }) => {
+      const { company } = input;
+
+      const command = new ListObjectsV2Command({
+        Bucket: process.env.S3_BUCKET!,
+        Prefix: `balances/${company}/`,
+        Delimiter: "/"
+      });
+
+      const response = await s3Client.send(command);
+
+      const years = response.CommonPrefixes?.map(prefix => {
+        const year = prefix.Prefix?.replace(`balances/${company}/`, "").replace("/", "");
+        return year;
+      }).filter(Boolean) || [];
+
+      return years;
+    }),
+
+  listAvailablePeriods: publicProcedure
+    .input(z.object({
+      company: z.string(),
+      year: z.string()
+    }))
+    .query(async ({ input }) => {
+      const { company, year } = input;
+
+      const command = new ListObjectsV2Command({
+        Bucket: process.env.S3_BUCKET!,
+        Prefix: `balances/${company}/${year}/`,
+      });
+
+      const response = await s3Client.send(command);
+
+      const periods = response.Contents?.map(item => {
+        const key = item.Key;
+        if (!key) return null;
+
+        // Extrair o nome do período do caminho do arquivo
+        const filename = key.split('/').pop();
+        if (!filename) return null;
+
+        // Remover a extensão .pdf
+        const period = filename.replace(".pdf", "");
+        return period;
+      }).filter(Boolean) || [];
+
+      return periods;
     }),
 });

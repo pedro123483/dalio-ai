@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { DashboardHeader } from "~/components/balance/dashboard-header"
 import { SearchAndUploadCard } from "~/components/balance/search-and-upload-card"
 import { BalancePreview } from "~/components/balance/balance-preview"
@@ -12,6 +15,16 @@ import {
 } from "~/components/ui/card";
 
 const Balance = () => {
+    const [selectedBalance, setSelectedBalance] = useState({
+      company: "",
+      year: "",
+      period: ""
+    });
+
+    const handleBalanceSelect = (company: string, year: string, period: string) => {
+      setSelectedBalance({ company, year, period });
+    };
+
     return (
         <div className="flex flex-col h-full">
           {/* <DashboardHeader /> */}
@@ -23,7 +36,7 @@ const Balance = () => {
     
             <div className="space-y-4">
               {/* Card que muda conforme a seleção do usuário */}
-              <SearchAndUploadCard />
+              <SearchAndUploadCard onBalanceSelect={handleBalanceSelect} />
     
               <div className="grid gap-4 md:grid-cols-2 w-full">
                 <Card className="md:col-span-2">
@@ -32,12 +45,15 @@ const Balance = () => {
                     <CardDescription>Visualização do documento</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <BalancePreview />
+                    <BalancePreview 
+                      company={selectedBalance.company} 
+                      year={selectedBalance.year} 
+                      period={selectedBalance.period} 
+                    />
                   </CardContent>
                 </Card>
     
-                {/* Card de Resumo da IA temporariamente desativado
-                <Card className="md:col-span-1">
+                {/* <Card className="md:col-span-1">
                   <CardHeader>
                     <CardTitle>Resumo da IA</CardTitle>
                     <CardDescription>Principais pontos identificados</CardDescription>
@@ -45,12 +61,10 @@ const Balance = () => {
                   <CardContent>
                     <AiSummary />
                   </CardContent>
-                </Card>
-                */}
+                </Card> */}
               </div>
     
-              {/* Card de Indicadores Financeiros temporariamente desativado
-              <Card>
+              {/* <Card>
                 <CardHeader>
                   <CardTitle>Indicadores Financeiros</CardTitle>
                   <CardDescription>Principais indicadores extraídos do balanço</CardDescription>
@@ -58,8 +72,7 @@ const Balance = () => {
                 <CardContent>
                   <FinancialIndicators />
                 </CardContent>
-              </Card>
-              */}
+              </Card> */}
             </div>
           </div>
         </div>

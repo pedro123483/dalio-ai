@@ -10,14 +10,23 @@ import type React from "react";
 // Configure o worker do PDF.js
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
-export function BalancePreview() {
+export function BalancePreview({ company, year, period }: { 
+  company?: string;
+  year?: string;
+  period?: string;
+}) {
   //const router = useRouter();
   //const { id } = router.query;
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pageNumber, setPageNumber] = useState(1);
 
-  const balanceId = 1; // ID do balanço a ser buscado
-  const { data, isLoading } = api.balance.getBalanceUrl.useQuery({ balanceId });
+  // Só buscar se todos os parâmetros estiverem presentes
+  const enabled = !!company && !!year && !!period;
+  
+  const { data, isLoading } = api.balance.getBalanceUrl.useQuery(
+    { company: company || "", year: year || "", period: period || "" },
+    { enabled }
+  );
 
   console.log("data", data);
 
@@ -25,6 +34,7 @@ export function BalancePreview() {
     setNumPages(numPages);
   }
 
+  if (!enabled) return <div>Selecione uma empresa, ano e período para visualizar o balanço</div>;
   if (isLoading) return <div>Carregando...</div>;
   if (!data?.url) return <div>PDF não encontrado</div>;
 

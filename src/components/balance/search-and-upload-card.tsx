@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs"
 import { SearchBalanceForm } from "~/components/balance/search-balance-form"
 import { UploadBalanceForm } from "~/components/balance/upload-balance-form"
 
-export function SearchAndUploadCard() {
+export function SearchAndUploadCard({ onBalanceSelect }: { onBalanceSelect: (company: string, year: string, period: string) => void }) {
   const [activeTab, setActiveTab] = useState("search")
 
   return (
@@ -27,7 +27,7 @@ export function SearchAndUploadCard() {
           </TabsList>
 
           <TabsContent value="search">
-            <SearchBalanceForm />
+            <SearchBalanceForm onBalanceSelect={onBalanceSelect} />
           </TabsContent>
 
           <TabsContent value="upload">
