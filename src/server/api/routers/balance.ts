@@ -7,7 +7,6 @@ import {
   ListObjectsV2Command,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-//import { prisma } from "~/server/db";
 
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
@@ -53,11 +52,13 @@ export const balanceRouter = createTRPCRouter({
       }),*/
 
   getBalanceUrl: publicProcedure
-    .input(z.object({
-      company: z.string(),
-      year: z.string(),
-      period: z.string()
-    }))
+    .input(
+      z.object({
+        company: z.string(),
+        year: z.string(),
+        period: z.string(),
+      }),
+    )
     .query(async ({ input }) => {
       const { company, year, period } = input;
       const key = `balances/${company}/${year}/${period}.pdf`;
@@ -75,25 +76,25 @@ export const balanceRouter = createTRPCRouter({
       return { url };
     }),
 
-  listCompanies: publicProcedure
-    .query(async () => {
-      // Listar todos os prefixos (empresas) na pasta balances/
-      const command = new ListObjectsV2Command({
-        Bucket: process.env.S3_BUCKET!,
-        Prefix: "balances/",
-        Delimiter: "/"
-      });
+  listCompanies: publicProcedure.query(async () => {
+    // Listar todos os prefixos (empresas) na pasta balances/
+    const command = new ListObjectsV2Command({
+      Bucket: process.env.S3_BUCKET!,
+      Prefix: "balances/",
+      Delimiter: "/",
+    });
 
-      const response = await s3Client.send(command);
+    const response = await s3Client.send(command);
 
-      // Extrair nomes das empresas dos prefixos
-      const companies = response.CommonPrefixes?.map(prefix => {
+    // Extrair nomes das empresas dos prefixos
+    const companies =
+      response.CommonPrefixes?.map((prefix) => {
         const name = prefix.Prefix?.replace("balances/", "").replace("/", "");
         return { name };
       }) || [];
 
-      return companies;
-    }),
+    return companies;
+  }),
 
   listAvailableYears: publicProcedure
     .input(z.object({ company: z.string() }))
@@ -103,24 +104,30 @@ export const balanceRouter = createTRPCRouter({
       const command = new ListObjectsV2Command({
         Bucket: process.env.S3_BUCKET!,
         Prefix: `balances/${company}/`,
-        Delimiter: "/"
+        Delimiter: "/",
       });
 
       const response = await s3Client.send(command);
 
-      const years = response.CommonPrefixes?.map(prefix => {
-        const year = prefix.Prefix?.replace(`balances/${company}/`, "").replace("/", "");
-        return year;
-      }).filter(Boolean) || [];
+      const years =
+        response.CommonPrefixes?.map((prefix) => {
+          const year = prefix.Prefix?.replace(
+            `balances/${company}/`,
+            "",
+          ).replace("/", "");
+          return year;
+        }).filter(Boolean) || [];
 
       return years;
     }),
 
   listAvailablePeriods: publicProcedure
-    .input(z.object({
-      company: z.string(),
-      year: z.string()
-    }))
+    .input(
+      z.object({
+        company: z.string(),
+        year: z.string(),
+      }),
+    )
     .query(async ({ input }) => {
       const { company, year } = input;
 
@@ -131,18 +138,19 @@ export const balanceRouter = createTRPCRouter({
 
       const response = await s3Client.send(command);
 
-      const periods = response.Contents?.map(item => {
-        const key = item.Key;
-        if (!key) return null;
+      const periods =
+        response.Contents?.map((item) => {
+          const key = item.Key;
+          if (!key) return null;
 
-        // Extrair o nome do período do caminho do arquivo
-        const filename = key.split('/').pop();
-        if (!filename) return null;
+          // Extrair o nome do período do caminho do arquivo
+          const filename = key.split("/").pop();
+          if (!filename) return null;
 
-        // Remover a extensão .pdf
-        const period = filename.replace(".pdf", "");
-        return period;
-      }).filter(Boolean) || [];
+          // Remover a extensão .pdf
+          const period = filename.replace(".pdf", "");
+          return period;
+        }).filter(Boolean) || [];
 
       return periods;
     }),

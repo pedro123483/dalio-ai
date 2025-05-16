@@ -2,23 +2,19 @@
 
 import type React from "react";
 import { useState, useEffect } from "react";
-import { Search, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { Input } from "~/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { Label } from "~/components/ui/label";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
 
 export function SearchBalanceForm({ onBalanceSelect }: { onBalanceSelect: (company: string, year: string, period: string) => void }) {
-  const [searchTerm, setSearchTerm] = useState("");
   const [searchType, setSearchType] = useState("name");
   const [selectedCompany, setSelectedCompany] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
   const [selectedPeriod, setSelectedPeriod] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [showResults, setShowResults] = useState(false);
-  const [filteredCompanies, setFilteredCompanies] = useState<{name: string}[]>([]);
 
   // Buscar lista de empresas
   const { data: companies, isLoading: isLoadingCompanies } = api.balance.listCompanies.useQuery();
@@ -35,24 +31,10 @@ export function SearchBalanceForm({ onBalanceSelect }: { onBalanceSelect: (compa
     { enabled: !!selectedCompany && !!selectedYear }
   );
 
-  // Filtrar empresas conforme o usuário digita
-  useEffect(() => {
-    if (companies && searchTerm) {
-      const filtered = companies.filter(company => 
-        company.name?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false
-      );
-      setFilteredCompanies(filtered as { name: string }[]);
-      setShowResults(true);
-    } else {
-      setFilteredCompanies([]);
-      setShowResults(false);
-    }
-  }, [searchTerm, companies]);
-
-  const handleCompanySelect = (companyName: string) => {
-    setSelectedCompany(companyName);
-    setSearchTerm(companyName);
-    setShowResults(false);
+  const handleCompanyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedCompany(e.target.value);
+    setSelectedYear("");
+    setSelectedPeriod("");
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -81,7 +63,6 @@ export function SearchBalanceForm({ onBalanceSelect }: { onBalanceSelect: (compa
 
     setIsLoading(true);
 
-    // Simulação de busca
     setTimeout(() => {
       setIsLoading(false);
       toast.success(`Balanço da empresa ${selectedCompany} carregado com sucesso`);
@@ -111,36 +92,23 @@ export function SearchBalanceForm({ onBalanceSelect }: { onBalanceSelect: (compa
         </RadioGroup>
       </div>
 
-      <div className="flex gap-2 relative">
-        <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="text"
-            placeholder={
-              searchType === "name" ? "Ex: Petrobras" : "Ex: 33.000.167/0001-01"
-            }
-            className="pl-8"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          
-          {/* Lista de resultados */}
-          {showResults && filteredCompanies.length > 0 && (
-            <div className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg border border-gray-200">
-              <ul className="max-h-60 overflow-auto py-1">
-                {filteredCompanies.map((company) => (
-                  <li
-                    key={company.name}
-                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => handleCompanySelect(company.name)}
-                  >
-                    {company.name}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
+      <div>
+        <Label htmlFor="company">Empresa</Label>
+        <select
+          id="company"
+          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          value={selectedCompany}
+          onChange={handleCompanyChange}
+          disabled={isLoadingCompanies}
+        >
+          <option value="">Selecione uma empresa</option>
+          {companies && companies.map((company) => (
+            <option key={company.name} value={company.name}>
+              {company.name}
+            </option>
+          ))}
+        </select>
+        {isLoadingCompanies && <p className="text-sm text-muted-foreground mt-1">Carregando empresas...</p>}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
