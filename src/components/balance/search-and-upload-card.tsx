@@ -15,7 +15,7 @@ export function SearchAndUploadCard({ onBalanceSelect }: { onBalanceSelect: (com
         <CardTitle>{activeTab === "search" ? "Buscar Balanço" : "Upload de Balanço"}</CardTitle>
         <CardDescription>
           {activeTab === "search"
-            ? "Informe o nome ou CNPJ da empresa para buscar o balanço"
+            ? "Selecione uma empresa para buscar o balanço"
             : "Faça upload do balanço para análise"}
         </CardDescription>
       </CardHeader>

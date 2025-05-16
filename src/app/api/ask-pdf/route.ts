@@ -24,8 +24,6 @@ export async function POST(req: NextRequest) {
     
     // 5. Limitar o tamanho do contexto
     const context = pdfText.slice(0, 150000);
-
-    // console.log("messages", messages);
     
     // 6. Usar streamText para gerar resposta em streaming
     const result = await streamText({

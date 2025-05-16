@@ -1,10 +1,9 @@
 "use client";
 
 import type React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "~/components/ui/button";
-import { RadioGroup, RadioGroupItem } from "~/components/ui/radio-group";
 import { Label } from "~/components/ui/label";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
@@ -74,24 +73,6 @@ export function SearchBalanceForm({ onBalanceSelect }: { onBalanceSelect: (compa
 
   return (
     <form onSubmit={handleSearch} className="space-y-4">
-      <div className="space-y-2">
-        <RadioGroup
-          defaultValue="name"
-          value={searchType}
-          onValueChange={setSearchType}
-          className="flex space-x-4"
-        >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="name" id="name" />
-            <Label htmlFor="name">Nome da Empresa</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="cnpj" id="cnpj" />
-            <Label htmlFor="cnpj">CNPJ</Label>
-          </div>
-        </RadioGroup>
-      </div>
-
       <div>
         <Label htmlFor="company">Empresa</Label>
         <select
