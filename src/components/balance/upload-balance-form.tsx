@@ -2,13 +2,21 @@
 
 import type React from "react"
 import { useState } from "react"
-import { FileUp, File, X, CheckCircle2, Loader2, MessageSquare, Send } from "lucide-react"
+import { FileUp, File, X, CheckCircle2, Loader2, MessageSquare, Send, Eye } from "lucide-react"
 import { Button } from "~/components/ui/button"
 import { Progress } from "~/components/ui/progress"
 import { cn } from "~/lib/utils"
 import { toast } from "sonner"
 import { useChat } from "ai/react"
 import { Input } from "~/components/ui/input"
+import { Document, Page, pdfjs } from "react-pdf"
+import "react-pdf/dist/esm/Page/AnnotationLayer.css"
+import "react-pdf/dist/esm/Page/TextLayer.css"
+
+// Configuração do worker do PDF.js
+if (typeof window !== "undefined" && !pdfjs.GlobalWorkerOptions.workerSrc) {
+  pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.mjs`
+}
 
 export function UploadBalanceForm() {
   const [files, setFiles] = useState<File[]>([])
@@ -16,7 +24,9 @@ export function UploadBalanceForm() {
   const [progress, setProgress] = useState(0)
   const [uploadComplete, setUploadComplete] = useState(false)
   const [pdfContent, setPdfContent] = useState<string | null>(null)
+  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null)
   const [showChat, setShowChat] = useState(false)
+  const [showPreview, setShowPreview] = useState(false)
   
   // Hook para o chat com o PDF
   const { messages, input, handleInputChange, handleSubmit, isLoading: isLoadingChat } = useChat({
@@ -62,7 +72,9 @@ export function UploadBalanceForm() {
       setFiles(selectedFiles)
       setUploadComplete(false)
       setPdfContent(null)
+      setPdfBlobUrl(null)
       setShowChat(false)
+      setShowPreview(false)
     }
   }
 
@@ -105,6 +117,10 @@ export function UploadBalanceForm() {
         content: base64String
       };
       
+      // Criar URL do Blob para visualização
+      const blob = new Blob([new Uint8Array(arrayBuffer)], { type: 'application/pdf' });
+      const blobUrl = URL.createObjectURL(blob);
+      
       // Simular processamento
       await new Promise(resolve => setTimeout(resolve, 1000))
       
@@ -112,12 +128,13 @@ export function UploadBalanceForm() {
       
       // Salvar conteúdo do PDF para uso no chat
       setPdfContent(JSON.stringify(pdfData))
+      setPdfBlobUrl(blobUrl)
       setProgress(100)
       setUploadComplete(true)
       setUploading(false)
       
       toast.success("Processado com sucesso", {
-        description: "Agora você pode fazer perguntas sobre o documento.",
+        description: "Agora você pode visualizar o documento e fazer perguntas sobre ele.",
       })
     } catch (error) {
       console.error("Erro ao processar:", error)
@@ -130,12 +147,23 @@ export function UploadBalanceForm() {
 
   const startChat = () => {
     setShowChat(true)
+    setShowPreview(false)
+  }
+  
+  const viewPdf = () => {
+    setShowPreview(true)
+    setShowChat(false)
+  }
+  
+  const backToOptions = () => {
+    setShowPreview(false)
+    setShowChat(false)
   }
 
   return (
     <div className="space-y-6">
-      {/* Interface de upload (apenas visível quando não estiver em modo de chat) */}
-      {!showChat && (
+      {/* Interface de upload (apenas visível quando não estiver em modo de chat ou visualização) */}
+      {!showChat && !showPreview && (
         <>
           <div
             className={cn(
@@ -190,7 +218,7 @@ export function UploadBalanceForm() {
             </div>
           )}
 
-          {/* Mensagem de conclusão e botão de chat */}
+          {/* Mensagem de conclusão e botões de ação */}
           {uploadComplete && (
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-sm font-medium text-green-600">
@@ -198,10 +226,17 @@ export function UploadBalanceForm() {
                 <span>Arquivo processado com sucesso!</span>
               </div>
               
-              <Button onClick={startChat} className="flex items-center gap-2">
-                <MessageSquare className="h-4 w-4" />
-                Fazer Perguntas sobre o Documento
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button onClick={viewPdf} className="flex items-center gap-2">
+                  <Eye className="h-4 w-4" />
+                  Visualizar PDF
+                </Button>
+                
+                <Button onClick={startChat} variant="secondary" className="flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4" />
+                  Fazer Perguntas sobre o Documento
+                </Button>
+              </div>
             </div>
           )}
 
@@ -224,13 +259,29 @@ export function UploadBalanceForm() {
         </>
       )}
 
+      {/* Visualização do PDF */}
+      {showPreview && pdfBlobUrl && (
+        <div className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium">Visualização do PDF</h3>
+            <Button variant="outline" onClick={backToOptions}>
+              Voltar
+            </Button>
+          </div>
+          
+          <div className="border rounded-lg p-4 bg-background">
+            <CustomPdfPreview pdfUrl={pdfBlobUrl} />
+          </div>
+        </div>
+      )}
+
       {/* Área de chat */}
       {showChat && (
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-medium">Chat com o Documento</h3>
-            <Button variant="outline" onClick={() => setShowChat(false)}>
-              Voltar para Upload
+            <Button variant="outline" onClick={backToOptions}>
+              Voltar
             </Button>
           </div>
           
@@ -280,6 +331,81 @@ export function UploadBalanceForm() {
               </Button>
             </form>
           </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// Componente simplificado para visualização de PDF
+function CustomPdfPreview({ pdfUrl }: { pdfUrl: string }) {
+  const [numPages, setNumPages] = useState<number | null>(null)
+  const [pageNumber, setPageNumber] = useState(1)
+
+  function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
+    setNumPages(numPages)
+    setPageNumber(1)
+  }
+
+  function changePage(offset: number) {
+    setPageNumber(prevPageNumber => prevPageNumber + offset)
+  }
+
+  function previousPage() {
+    changePage(-1)
+  }
+
+  function nextPage() {
+    changePage(1)
+  }
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className="border rounded-md overflow-auto max-h-[70vh] w-full">
+        <Document
+          file={pdfUrl}
+          onLoadSuccess={onDocumentLoadSuccess}
+          loading={
+            <div className="flex justify-center items-center h-[500px]">
+              <p>Carregando PDF...</p>
+            </div>
+          }
+          error={
+            <div className="flex justify-center items-center h-[500px]">
+              <p>Erro ao carregar o PDF. Verifique se o arquivo é válido.</p>
+            </div>
+          }
+        >
+          <Page
+            pageNumber={pageNumber}
+            renderTextLayer={false}
+            renderAnnotationLayer={false}
+            width={Math.min(600, window.innerWidth - 48)}
+          />
+        </Document>
+      </div>
+
+      {numPages && numPages > 1 && (
+        <div className="flex items-center justify-center gap-4 mt-4">
+          <Button
+            onClick={previousPage}
+            disabled={pageNumber <= 1}
+            variant="outline"
+            size="sm"
+          >
+            Anterior
+          </Button>
+          <p className="text-sm text-muted-foreground">
+            Página {pageNumber} de {numPages}
+          </p>
+          <Button
+            onClick={nextPage}
+            disabled={pageNumber >= numPages}
+            variant="outline"
+            size="sm"
+          >
+            Próxima
+          </Button>
         </div>
       )}
     </div>
