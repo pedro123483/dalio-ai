@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   const { pdfUrl, messages } = await req.json();
 
   try {
-    // 1. Baixar o PDF da URL
+    // 1. Baixar o PDF da URL e salvar no storage
     const response = await fetch(pdfUrl);
     if (!response.ok) throw new Error(`Falha ao buscar PDF: ${response.status}`);
     
