@@ -12,6 +12,8 @@ import { Input } from "~/components/ui/input"
 import { Document, Page, pdfjs } from "react-pdf"
 import "react-pdf/dist/esm/Page/AnnotationLayer.css"
 import "react-pdf/dist/esm/Page/TextLayer.css"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 
 // Configuração do worker do PDF.js
 if (typeof window !== "undefined" && !pdfjs.GlobalWorkerOptions.workerSrc) {
@@ -296,13 +298,22 @@ export function UploadBalanceForm() {
                   {messages.map((message) => (
                     <div
                       key={message.id}
-                      className={`p-3 rounded-lg ${
+                      className={cn(
+                        "p-3 rounded-lg max-w-[80%]",
                         message.role === "user"
                           ? "bg-primary text-primary-foreground ml-auto"
-                          : "bg-muted"
-                      } max-w-[80%] ${message.role === "user" ? "ml-auto" : "mr-auto"}`}
+                          : "bg-muted mr-auto"
+                      )}
                     >
-                      <p className="whitespace-pre-wrap">{message.content}</p>
+                      {message.role === "user" ? (
+                        <div className="whitespace-pre-wrap">{message.content}</div>
+                      ) : (
+                        <div className="prose prose-sm dark:prose-invert">
+                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {message.content}
+                          </ReactMarkdown>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

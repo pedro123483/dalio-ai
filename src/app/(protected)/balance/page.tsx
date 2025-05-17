@@ -20,9 +20,14 @@ const Balance = () => {
       year: "",
       period: ""
     });
+    const [activeTab, setActiveTab] = useState("search");
 
     const handleBalanceSelect = (company: string, year: string, period: string) => {
       setSelectedBalance({ company, year, period });
+    };
+
+    const handleTabChange = (tab: string) => {
+      setActiveTab(tab);
     };
 
     return (
@@ -36,44 +41,49 @@ const Balance = () => {
     
             <div className="space-y-4">
               {/* Card que muda conforme a seleção do usuário */}
-              <SearchAndUploadCard onBalanceSelect={handleBalanceSelect} />
+              <SearchAndUploadCard 
+                onBalanceSelect={handleBalanceSelect} 
+                onTabChange={handleTabChange}
+              />
     
-              <div className="grid gap-4 md:grid-cols-2 w-full">
-                <Card className="md:col-span-2">
-                  <CardHeader>
-                    <CardTitle>Balanço Patrimonial</CardTitle>
-                    <CardDescription>Visualização do documento</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <BalancePreview 
-                      company={selectedBalance.company} 
-                      year={selectedBalance.year} 
-                      period={selectedBalance.period} 
-                    />
-                  </CardContent>
-                </Card>
+              {activeTab === "search" && (
+                <div className="grid gap-4 md:grid-cols-2 w-full">
+                  <Card className="md:col-span-2">
+                    <CardHeader>
+                      <CardTitle>Balanço Patrimonial</CardTitle>
+                      <CardDescription>Visualização do documento</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <BalancePreview 
+                        company={selectedBalance.company} 
+                        year={selectedBalance.year} 
+                        period={selectedBalance.period} 
+                      />
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
     
-                {/* <Card className="md:col-span-1">
-                  <CardHeader>
-                    <CardTitle>Resumo da IA</CardTitle>
-                    <CardDescription>Principais pontos identificados</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <AiSummary />
-                  </CardContent>
-                </Card> */}
-              </div>
-    
-              {/* <Card>
+              {/* <Card className="md:col-span-1">
                 <CardHeader>
-                  <CardTitle>Indicadores Financeiros</CardTitle>
-                  <CardDescription>Principais indicadores extraídos do balanço</CardDescription>
+                  <CardTitle>Resumo da IA</CardTitle>
+                  <CardDescription>Principais pontos identificados</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <FinancialIndicators />
+                  <AiSummary />
                 </CardContent>
               </Card> */}
             </div>
+    
+            {/* <Card>
+              <CardHeader>
+                <CardTitle>Indicadores Financeiros</CardTitle>
+                <CardDescription>Principais indicadores extraídos do balanço</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FinancialIndicators />
+              </CardContent>
+            </Card> */}
           </div>
         </div>
       )
