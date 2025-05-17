@@ -22,7 +22,6 @@ import {
 import Link from "next/link";
 import { api } from "~/trpc/react";
 import { VisualWorkflow } from "~/components/landing/VisualWorkflow";
-import { StockList } from "~/components/StockList";
 
 const Landing = () => {
   const [email, setEmail] = useState("");
