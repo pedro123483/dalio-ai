@@ -16,12 +16,13 @@ export function ChatInterface() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Estado para controlar sugestões/chat
+  // Estado para controlar se está mostrando sugestões ou chat
   const [view, setView] = useState<"suggestions" | "chat">("suggestions");
 
+  // Hook de chat (ajuste se seu useChat for diferente)
   const { messages, input, handleInputChange, handleSubmit, setInput, setMessages } = useChat({});
 
-  // 12 sugestões
+  // 12 sugestões de perguntas
   const suggestions = [
     "Qual o resultado financeiro da Petrobras em 2024?",
     "Compare BTG e Itaú no último ano.",
@@ -43,32 +44,41 @@ export function ChatInterface() {
     }
   }, [messages, view]);
 
+  // Envio de mensagem ao enviar form
   const handleChatSubmit = (e: React.FormEvent) => {
-    handleSubmit(e, {
-      experimental_attachments: files,
-    });
+    handleSubmit(e, { experimental_attachments: files });
     setFiles(undefined);
     if (fileInputRef.current) fileInputRef.current.value = '';
-    setView("chat"); // Troca para o modo chat ao enviar mensagem
+    setView("chat");
   };
 
   const handleFileClick = () => {
     fileInputRef.current?.click();
   };
 
-  const handleSelectSuggestion = (suggestion: string) => {
+  // Função para enviar mensagem ao clicar numa sugestão
+  const handleSendSuggestion = (suggestion: string) => {
     setInput(suggestion);
-    setView("chat"); // Troca para chat ao selecionar sugestão
+
+    // Cria um evento fake só para passar para o handleSubmit
+    const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+    handleSubmit(fakeEvent, {
+      experimental_attachments: files,
+    });
+
+    setView("chat");
   };
 
+  // Botão de voltar para sugestões
   const handleBackToSuggestions = () => {
     setView("suggestions");
     setInput("");
-    setMessages([]); // Opcional: limpa as mensagens, pode remover se quiser manter histórico
+    setMessages([]); // Limpa histórico, remova se quiser manter o chat
   };
 
   return (
     <div className="flex h-[calc(108vh-5rem)] w-full flex-col overflow-hidden rounded-lg border bg-card">
+
       {/* Header com botão de voltar */}
       {view === "chat" && (
         <div className="flex items-center gap-2 px-4 py-2 border-b bg-card">
@@ -93,10 +103,11 @@ export function ChatInterface() {
             ))}
           {isLoading && <ChatLoadingIndicator />}
         </div>
+        {/* Sugestões só aparecem no modo suggestions */}
         {view === "suggestions" && (
           <ChatSuggestions
             suggestions={suggestions}
-            onSelectSuggestion={handleSelectSuggestion}
+            onSelectSuggestion={handleSendSuggestion}
           />
         )}
       </ScrollArea>
