@@ -132,10 +132,48 @@ export const incomeStatementTool = createTool({
   },
 });
 
+export const inflationTool = createTool({
+  description: "Buscar a inflação do Brasil",
+  parameters: z.object({
+    startDate: z.string().describe("Data inicial do período a ser buscado. Exemplo: 01/01/2020"),
+    endDate: z.string().describe("Data final do período a ser buscado. Exemplo: 01/01/2021"),
+  }),
+
+  execute: async function ({ startDate, endDate }) {
+    const { data } = await axios.get(
+      `https://brapi.dev/api/v2/inflation?country=brazil&start=${startDate}&end=${endDate}&sortBy=date&sortOrder=desc&token=${process.env.BRAPI_API_KEY}`,
+    );
+
+    return data;
+  },
+});
+
+export const primeRateTool = createTool({
+  description: "Buscar a taxa de juros primária do Brasil",
+  parameters: z.object({
+    startDate: z.string().describe("Data inicial do período a ser buscado. Exemplo: 01/01/2020"),
+    endDate: z.string().describe("Data final do período a ser buscado. Exemplo: 01/01/2021"),
+  }),
+
+  execute: async function ({ startDate, endDate }) {
+    console.log("startDate", startDate);
+    console.log("endDate", endDate);
+    const { data } = await axios.get(
+      `https://brapi.dev/api/v2/prime-rate?country=brazil&start=${startDate}&end=${endDate}&sortBy=date&sortOrder=desc&token=${process.env.BRAPI_API_KEY}`,
+    );
+
+    console.log("data", data);
+
+    return data;
+  },
+});
+
 
 export const tools = {
   getAssetQuote: brapiQuoteTool,
   compareMultipleAssets: assetComparisonTool,
   getIncomeStatement: incomeStatementTool,
+  getInflation: inflationTool,
+  getPrimeRate: primeRateTool,
   web_search_preview: openai.tools.webSearchPreview(),
 };

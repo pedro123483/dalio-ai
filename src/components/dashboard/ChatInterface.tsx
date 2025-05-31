@@ -5,20 +5,17 @@ import { ScrollArea } from "~/components/ui/scroll-area";
 import { ChatMessage } from "./chat/ChatMessage";
 import { ChatInput } from "./chat/ChatInput";
 import { ChatSuggestions } from "./chat/ChatSuggestions";
-import { ChatLoadingIndicator } from "./chat/ChatLoadingIndicator";
 import { Message } from "~/types/chat";
 import { useChat } from "@ai-sdk/react";
 import { Paperclip } from "lucide-react";
 import { Button } from "~/components/ui/button";
 
 export function ChatInterface() {
-  const [isLoading, setIsLoading] = useState(false);
   const [files, setFiles] = useState<FileList | undefined>(undefined);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
-  const { messages, input, handleInputChange, handleSubmit, setInput } =
-    useChat({});
+  const { messages, input, handleInputChange, handleSubmit, setInput, isLoading } = useChat({});
 
   // Exemplos de perguntas que o usuário pode fazer
   const suggestions = [
@@ -26,6 +23,8 @@ export function ChatInterface() {
     "Compare BTG e Itaú no último ano",
     "Compare BTLG11 e XPML11 nos últimos 6 meses",
     "Como está a ação da Magalu hoje?",
+    "Qual a inflação do Brasil em 2024?",
+    "Qual a taxa de juros do Brasil em 2024?",
   ];
 
   useEffect(() => {
@@ -57,8 +56,6 @@ export function ChatInterface() {
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
           ))}
-
-          {isLoading && <ChatLoadingIndicator />}
         </div>
 
         {messages.length === 0 && (
