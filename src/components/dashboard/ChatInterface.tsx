@@ -21,7 +21,7 @@ export function ChatInterface() {
     "Qual o resultado financeiro da Petrobras em 2024?",
     "Compare BTG e Itaú no último ano.",
     "Compare BTLG11 e XPML11 nos últimos 6 meses.",
-    "Como está a ação da Magalu hoje?",
+    "Como está a ação da Magalu hoje??",
     "Quais são os principais indicadores da Vale?",
     "Como está o desempenho do setor bancário em 2024?",
     "Qual a diferença entre ações ON e PN?",
