@@ -168,11 +168,47 @@ export function UploadBalanceForm() {
       {!showChat && !showPreview && (
         <>
           <div
-            className={cn(
-              "border-2 border-dashed rounded-lg p-6 text-center hover:bg-muted/50 transition-colors",
-              uploading && "opacity-50 pointer-events-none",
-            )}
-          >
+  className={cn(
+    "border-2 border-dashed rounded-lg p-6 text-center hover:bg-muted/50 transition-colors",
+    uploading && "opacity-50 pointer-events-none",
+  )}
+  onDragOver={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }}
+  onDrop={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const droppedFiles = Array.from(e.dataTransfer.files);
+
+    const validFiles = droppedFiles.filter((file) => file.type === "application/pdf");
+    const invalidFiles = droppedFiles.filter((file) => file.type !== "application/pdf");
+    const oversizedFiles = validFiles.filter((file) => file.size > 10 * 1024 * 1024);
+
+    if (invalidFiles.length > 0) {
+      toast.error("Formato inválido", {
+        description: "Por favor, selecione apenas arquivos PDF",
+      });
+      return;
+    }
+
+    if (oversizedFiles.length > 0) {
+      toast.error("Arquivo muito grande", {
+        description: "O tamanho máximo permitido é 10MB",
+      });
+      return;
+    }
+
+    setFiles(validFiles);
+    setUploadComplete(false);
+    setPdfContent(null);
+    setPdfBlobUrl(null);
+    setShowChat(false);
+    setShowPreview(false);
+  }}
+>
+
             <input
               type="file"
               id="file-upload"
