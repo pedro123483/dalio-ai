@@ -64,7 +64,7 @@ export function SearchBalanceForm({ onBalanceSelect }: { onBalanceSelect: (compa
 
     setTimeout(() => {
       setIsLoading(false);
-      toast.success(`Balanço da empresa ${selectedCompany} carregado com sucesso`);
+      toast.success(`Relatório da empresa ${selectedCompany} carregado com sucesso`);
       
       // Chamar o método onBalanceSelect aqui, passando os valores selecionados
       onBalanceSelect(selectedCompany, selectedYear, selectedPeriod);

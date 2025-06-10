@@ -36,7 +36,7 @@ const Balance = () => {
     
           <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-3xl font-bold tracking-tight">Análise de Balanços</h2>
+              <h2 className="text-3xl font-bold tracking-tight">Análise de Documentos</h2>
             </div>
     
             <div className="space-y-4">
@@ -50,7 +50,7 @@ const Balance = () => {
                 <div className="grid gap-4 md:grid-cols-2 w-full">
                   <Card className="md:col-span-2">
                     <CardHeader>
-                      <CardTitle>Balanço Patrimonial</CardTitle>
+                      <CardTitle>Relatório Patrimonial</CardTitle>
                       <CardDescription>Visualização do documento</CardDescription>
                     </CardHeader>
                     <CardContent>

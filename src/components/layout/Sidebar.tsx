@@ -36,7 +36,7 @@ const menuItems = [
     icon: MessageSquare,
   },
   {
-    title: "Balanços",
+    title: "Relatório",
     href: "/balance",
     icon: Search,
   },

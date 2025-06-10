@@ -96,7 +96,7 @@ export function BalancePreview({ company, year, period }: {
     changePage(1);
   }
 
-  if (!enabled) return <div>Selecione uma empresa, ano e período para visualizar o balanço</div>;
+  if (!enabled) return <div>Selecione uma empresa, ano e período para visualizar o relatório</div>;
   if (isLoadingApi) return <div>Carregando...</div>;
   if (!data?.url) return <div>PDF não encontrado</div>;
 
@@ -131,7 +131,7 @@ export function BalancePreview({ company, year, period }: {
   return (
     <div className="flex w-full">
       <div className="w-1/2 p-2">
-        <h1 className="mb-2 text-xl font-bold">Balanço Financeiro</h1>
+        <h1 className="mb-2 text-xl font-bold">Relatório Financeiro</h1>
         {isLoading && (
           <div className="flex justify-center items-center h-[400px] w-full">
             <div className="flex flex-col items-center gap-2">
@@ -200,13 +200,13 @@ export function BalancePreview({ company, year, period }: {
       {!isLoading ? (
         <div className="w-1/2 p-2 flex flex-col h-[700px] border-l">
           <div className="flex-1 overflow-auto p-4">
-            <h2 className="text-xl font-bold mb-6 mt-2">Pergunte sobre o balanço</h2>
+            <h2 className="text-xl font-bold mb-6 mt-2">Pergunte sobre o documento</h2>
             
             <div className="space-y-4 mt-8">
               {messages.length === 0 ? (
                 <div className="flex justify-center items-center py-12">
                   <p className="text-muted-foreground text-center">
-                    Faça perguntas sobre este balanço financeiro.<br />
+                    Faça perguntas sobre este relatório financeiro.<br />
                     Por exemplo: "Qual foi o lucro líquido?" ou "Qual o valor do patrimônio líquido?"
                   </p>
                 </div>
@@ -239,7 +239,7 @@ export function BalancePreview({ company, year, period }: {
               {isLoadingChat && (
                 <div className="flex items-center justify-center p-4">
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  <p className="text-sm text-muted-foreground">Analisando balanço...</p>
+                  <p className="text-sm text-muted-foreground">Analisando documento...</p>
                 </div>
               )}
             </div>
@@ -250,7 +250,7 @@ export function BalancePreview({ company, year, period }: {
             className="flex items-center gap-2 border-t p-4"
           >
             <Input
-              placeholder="Faça uma pergunta sobre este balanço..."
+              placeholder="Faça uma pergunta sobre este relatório..."
               value={input}
               onChange={handleInputChange}
               disabled={isLoadingChat}

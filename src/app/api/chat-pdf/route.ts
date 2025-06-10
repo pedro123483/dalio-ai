@@ -47,7 +47,7 @@ export async function POST(req: Request) {
       
       // Criar o prompt com contexto
       const prompt = `
-      Abaixo está o conteúdo de um PDF de balanço financeiro. Use APENAS as informações presentes
+      Abaixo está o conteúdo de um PDF de relatório financeiro. Use APENAS as informações presentes
       neste documento para responder à pergunta.
       
       CONTEÚDO DO PDF:

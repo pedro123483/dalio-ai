@@ -28,7 +28,7 @@ export function AiSummary() {
 
   // Texto de exemplo para o resumo da IA
   const summaryText = `
-    A análise do balanço patrimonial da Petrobras para o ano fiscal de 2023 revela uma posição financeira sólida e em melhoria:
+    A análise do relatório patrimonial da Petrobras para o ano fiscal de 2023 revela uma posição financeira sólida e em melhoria:
 
     • Liquidez: A empresa apresenta índices de liquidez robustos, com liquidez corrente de 2,2, indicando boa capacidade de pagamento de obrigações de curto prazo.
 
