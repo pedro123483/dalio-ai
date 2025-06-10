@@ -1,5 +1,5 @@
 "use client"
-
+import { useRef, useEffect } from "react";
 import type React from "react"
 import { useState } from "react"
 import { FileUp, File, X, CheckCircle2, Loader2, MessageSquare, Send, Eye } from "lucide-react"
@@ -48,6 +48,15 @@ export function UploadBalanceForm() {
       'Content-Type': 'application/json',
     }
   })
+
+    const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight
+    }
+  }, [messages])
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -324,7 +333,7 @@ export function UploadBalanceForm() {
           </div>
           
           <div className="border rounded-lg h-[500px] flex flex-col">
-            <div className="flex-1 p-4 overflow-auto">
+            <div className="flex-1 p-4 overflow-auto" ref={scrollContainerRef}>
               {messages.length === 0 ? (
                 <p className="text-center text-muted-foreground p-4">
                   Faça perguntas sobre o documento que você enviou.
