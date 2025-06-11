@@ -1,5 +1,5 @@
 "use client"
-
+import { useRef, useEffect } from "react";
 import type React from "react"
 import { useState } from "react"
 import { FileUp, File, X, CheckCircle2, Loader2, MessageSquare, Send, Eye } from "lucide-react"
@@ -48,6 +48,15 @@ export function UploadBalanceForm() {
       'Content-Type': 'application/json',
     }
   })
+
+    const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight
+    }
+  }, [messages])
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -168,11 +177,47 @@ export function UploadBalanceForm() {
       {!showChat && !showPreview && (
         <>
           <div
-            className={cn(
-              "border-2 border-dashed rounded-lg p-6 text-center hover:bg-muted/50 transition-colors",
-              uploading && "opacity-50 pointer-events-none",
-            )}
-          >
+  className={cn(
+    "border-2 border-dashed rounded-lg p-6 text-center hover:bg-muted/50 transition-colors",
+    uploading && "opacity-50 pointer-events-none",
+  )}
+  onDragOver={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }}
+  onDrop={(e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const droppedFiles = Array.from(e.dataTransfer.files);
+
+    const validFiles = droppedFiles.filter((file) => file.type === "application/pdf");
+    const invalidFiles = droppedFiles.filter((file) => file.type !== "application/pdf");
+    const oversizedFiles = validFiles.filter((file) => file.size > 10 * 1024 * 1024);
+
+    if (invalidFiles.length > 0) {
+      toast.error("Formato inválido", {
+        description: "Por favor, selecione apenas arquivos PDF",
+      });
+      return;
+    }
+
+    if (oversizedFiles.length > 0) {
+      toast.error("Arquivo muito grande", {
+        description: "O tamanho máximo permitido é 10MB",
+      });
+      return;
+    }
+
+    setFiles(validFiles);
+    setUploadComplete(false);
+    setPdfContent(null);
+    setPdfBlobUrl(null);
+    setShowChat(false);
+    setShowPreview(false);
+  }}
+>
+
             <input
               type="file"
               id="file-upload"
@@ -288,7 +333,7 @@ export function UploadBalanceForm() {
           </div>
           
           <div className="border rounded-lg h-[500px] flex flex-col">
-            <div className="flex-1 p-4 overflow-auto">
+            <div className="flex-1 p-4 overflow-auto" ref={scrollContainerRef}>
               {messages.length === 0 ? (
                 <p className="text-center text-muted-foreground p-4">
                   Faça perguntas sobre o documento que você enviou.

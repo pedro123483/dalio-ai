@@ -26,18 +26,18 @@ export function SearchAndUploadCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{activeTab === "search" ? "Buscar Balanço" : "Upload de Balanço"}</CardTitle>
+        <CardTitle>{activeTab === "search" ? "Buscar Relatório" : "Upload de Relatório"}</CardTitle>
         <CardDescription>
           {activeTab === "search"
-            ? "Selecione uma empresa para buscar o balanço"
-            : "Faça upload do balanço para análise"}
+            ? "Selecione uma empresa para buscar o Relatório"
+            : "Faça upload do relatório para análise"}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="search" value={activeTab} onValueChange={handleTabChange}>
           <TabsList className="mb-4">
-            <TabsTrigger value="search">Buscar Balanço</TabsTrigger>
-            <TabsTrigger value="upload">Upload de Balanço</TabsTrigger>
+            <TabsTrigger value="search">Buscar Relatório</TabsTrigger>
+            <TabsTrigger value="upload">Upload de Relatório</TabsTrigger>
           </TabsList>
 
           <TabsContent value="search">
