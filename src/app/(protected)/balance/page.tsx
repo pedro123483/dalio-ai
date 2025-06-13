@@ -72,11 +72,10 @@ const Balance = () => {
           />
 
           {activeTab === "search" && (
-            <div className="grid w-full gap-4 md:grid-cols-2">
+            <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
               <Card className="md:col-span-2">
                 <CardHeader>
                   <CardTitle>Visualização do documento</CardTitle>
-                  
                 </CardHeader>
                 <CardContent>
                   <BalancePreview

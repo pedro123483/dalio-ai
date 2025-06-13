@@ -12,7 +12,15 @@ import { Button } from "~/components/ui/button";
 export function ChatInterface() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  const { messages, input, handleInputChange, handleSubmit, setInput, setMessages, isLoading } = useChat({});
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    setInput,
+    setMessages,
+    isLoading,
+  } = useChat({});
 
   const suggestions = [
     "Qual o resultado financeiro da Petrobras em 2024?",
@@ -45,9 +53,9 @@ export function ChatInterface() {
   };
 
   return (
-    <div className="flex h-[calc(108vh-5rem)] w-full flex-col overflow-hidden rounded-lg border bg-card">
+    <div className="flex h-[calc(100dvh-4rem)] w-full flex-col overflow-hidden rounded-lg border bg-card md:h-[calc(108vh-5rem)]">
       {/* Header com o botão de voltar */}
-      <div className="flex items-center gap-2 px-4 py-2 border-b bg-card">
+      <div className="flex items-center gap-2 border-b bg-card px-4 py-2">
         <Button
           variant="ghost"
           size="icon"
@@ -57,10 +65,10 @@ export function ChatInterface() {
         >
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <span className="font-semibold text-lg tracking-tight">Dalio AI</span>
+        <span className="text-lg font-semibold tracking-tight">Dalio AI</span>
       </div>
 
-      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+      <ScrollArea className="flex-1 p-2 sm:p-4" ref={scrollAreaRef}>
         <div className="mb-4 space-y-4">
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
@@ -75,7 +83,7 @@ export function ChatInterface() {
         )}
       </ScrollArea>
 
-      <div className="border-t p-4">
+      <div className="border-t p-2 sm:p-4">
         <form onSubmit={handleChatSubmit} className="flex flex-col space-y-2">
           <ChatInput
             input={input}

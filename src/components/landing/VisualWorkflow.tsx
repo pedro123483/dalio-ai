@@ -23,7 +23,9 @@ export function VisualWorkflow() {
   return (
     <div className="mx-auto w-full max-w-6xl">
       <div
-        className={`grid grid-cols-1 ${isMobile ? "" : "md:grid-cols-3"} mb-16 gap-8`}
+        className={`mb-16 grid grid-cols-1 gap-8 ${
+          isMobile ? "" : "md:grid-cols-3"
+        }`}
       >
         {/* Step 1: User Query */}
         <div className="flex flex-col">

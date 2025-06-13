@@ -14,7 +14,7 @@ export function ChatSuggestions({
       <h3 className="mb-3 text-center text-sm font-medium">
         Sugestões de perguntas
       </h3>
-      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+      <div className="xs:grid-cols-2 grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
         {suggestions.map((suggestion, index) => (
           <Button
             key={index}
