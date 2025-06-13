@@ -22,6 +22,7 @@ const Balance = () => {
     period: "",
   });
   const [activeTab, setActiveTab] = useState("search");
+  const [uploadKey, setUploadKey] = useState(0); // usado para resetar o upload
 
   const handleBalanceSelect = (
     company: string,
@@ -38,6 +39,7 @@ const Balance = () => {
   const handleReset = () => {
     setSelectedBalance({ company: "", year: "", period: "" });
     setActiveTab("search");
+    setUploadKey((k) => k + 1); // força o reset do componente de upload
   };
 
   return (
@@ -67,16 +69,16 @@ const Balance = () => {
         <div className="space-y-4">
           {/* Componente de upload */}
           <SearchAndUploadCard
+            key={uploadKey}
             onBalanceSelect={handleBalanceSelect}
             onTabChange={handleTabChange}
           />
 
           {activeTab === "search" && (
-            <div className="grid w-full gap-4 md:grid-cols-2">
+            <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
               <Card className="md:col-span-2">
                 <CardHeader>
-                  <CardTitle>Relatório Patrimonial</CardTitle>
-                  <CardDescription>Visualização do documento</CardDescription>
+                  <CardTitle>Visualização do documento</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <BalancePreview

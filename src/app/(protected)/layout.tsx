@@ -34,13 +34,14 @@ export default function ProtectedLayout({
         <main
           className={cn(
             "flex-1 overflow-y-auto transition-all duration-300 ease-in-out",
+            "w-full",
           )}
         >
           <div className="h-full py-4">
             <div
               className={cn(
                 "h-full w-full",
-                isMobile ? "px-4 sm:px-5" : "px-4 sm:px-10",
+                isMobile ? "px-2 sm:px-3" : "px-4 sm:px-10",
               )}
             >
               {children}

@@ -8,7 +8,11 @@ import { Label } from "~/components/ui/label";
 import { toast } from "sonner";
 import { api } from "~/trpc/react";
 
-export function SearchBalanceForm({ onBalanceSelect }: { onBalanceSelect: (company: string, year: string, period: string) => void }) {
+export function SearchBalanceForm({
+  onBalanceSelect,
+}: {
+  onBalanceSelect: (company: string, year: string, period: string) => void;
+}) {
   const [searchType, setSearchType] = useState("name");
   const [selectedCompany, setSelectedCompany] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
@@ -16,19 +20,22 @@ export function SearchBalanceForm({ onBalanceSelect }: { onBalanceSelect: (compa
   const [isLoading, setIsLoading] = useState(false);
 
   // Buscar lista de empresas
-  const { data: companies, isLoading: isLoadingCompanies } = api.balance.listCompanies.useQuery();
-  
+  const { data: companies, isLoading: isLoadingCompanies } =
+    api.balance.listCompanies.useQuery();
+
   // Buscar anos disponíveis quando a empresa for selecionada
-  const { data: years, isLoading: isLoadingYears } = api.balance.listAvailableYears.useQuery(
-    { company: selectedCompany },
-    { enabled: !!selectedCompany }
-  );
-  
+  const { data: years, isLoading: isLoadingYears } =
+    api.balance.listAvailableYears.useQuery(
+      { company: selectedCompany },
+      { enabled: !!selectedCompany },
+    );
+
   // Buscar períodos disponíveis quando o ano for selecionado
-  const { data: periods, isLoading: isLoadingPeriods } = api.balance.listAvailablePeriods.useQuery(
-    { company: selectedCompany, year: selectedYear },
-    { enabled: !!selectedCompany && !!selectedYear }
-  );
+  const { data: periods, isLoading: isLoadingPeriods } =
+    api.balance.listAvailablePeriods.useQuery(
+      { company: selectedCompany, year: selectedYear },
+      { enabled: !!selectedCompany && !!selectedYear },
+    );
 
   const handleCompanyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCompany(e.target.value);
@@ -64,8 +71,10 @@ export function SearchBalanceForm({ onBalanceSelect }: { onBalanceSelect: (compa
 
     setTimeout(() => {
       setIsLoading(false);
-      toast.success(`Relatório da empresa ${selectedCompany} carregado com sucesso`);
-      
+      toast.success(
+        `Relatório da empresa ${selectedCompany} carregado com sucesso`,
+      );
+
       // Chamar o método onBalanceSelect aqui, passando os valores selecionados
       onBalanceSelect(selectedCompany, selectedYear, selectedPeriod);
     }, 1500);
@@ -83,16 +92,21 @@ export function SearchBalanceForm({ onBalanceSelect }: { onBalanceSelect: (compa
           disabled={isLoadingCompanies}
         >
           <option value="">Selecione uma empresa</option>
-          {companies && companies.map((company) => (
-            <option key={company.name} value={company.name}>
-              {company.name}
-            </option>
-          ))}
+          {companies &&
+            companies.map((company) => (
+              <option key={company.name} value={company.name}>
+                {company.name}
+              </option>
+            ))}
         </select>
-        {isLoadingCompanies && <p className="text-sm text-muted-foreground mt-1">Carregando empresas...</p>}
+        {isLoadingCompanies && (
+          <p className="mt-1 text-sm text-muted-foreground">
+            Carregando empresas...
+          </p>
+        )}
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <Label htmlFor="year">Ano</Label>
           <select
@@ -103,13 +117,18 @@ export function SearchBalanceForm({ onBalanceSelect }: { onBalanceSelect: (compa
             disabled={!selectedCompany || isLoadingYears}
           >
             <option value="">Selecione um ano</option>
-            {years && years.map((year) => (
-              <option key={year} value={year}>
-                {year}
-              </option>
-            ))}
+            {years &&
+              years.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
           </select>
-          {isLoadingYears && <p className="text-sm text-muted-foreground mt-1">Carregando anos...</p>}
+          {isLoadingYears && (
+            <p className="mt-1 text-sm text-muted-foreground">
+              Carregando anos...
+            </p>
+          )}
         </div>
         <div>
           <Label htmlFor="period">Período</Label>
@@ -121,21 +140,38 @@ export function SearchBalanceForm({ onBalanceSelect }: { onBalanceSelect: (compa
             disabled={!selectedYear || isLoadingPeriods}
           >
             <option value="">Selecione um período</option>
-            {periods && periods.map((period) => (
-              <option key={period} value={period ?? ""}>
-                {period === "anual" ? "Anual" : 
-                 period === "q1" ? "1º Trimestre" :
-                 period === "q2" ? "2º Trimestre" :
-                 period === "q3" ? "3º Trimestre" :
-                 period === "q4" ? "4º Trimestre" : period}
-              </option>
-            ))}
+            {periods &&
+              periods.map((period) => (
+                <option key={period} value={period ?? ""}>
+                  {period === "anual"
+                    ? "Anual"
+                    : period === "q1"
+                      ? "1º Trimestre"
+                      : period === "q2"
+                        ? "2º Trimestre"
+                        : period === "q3"
+                          ? "3º Trimestre"
+                          : period === "q4"
+                            ? "4º Trimestre"
+                            : period}
+                </option>
+              ))}
           </select>
-          {isLoadingPeriods && <p className="text-sm text-muted-foreground mt-1">Carregando períodos...</p>}
+          {isLoadingPeriods && (
+            <p className="mt-1 text-sm text-muted-foreground">
+              Carregando períodos...
+            </p>
+          )}
         </div>
       </div>
 
-      <Button type="submit" disabled={isLoading || !selectedCompany || !selectedYear || !selectedPeriod} className="w-full">
+      <Button
+        type="submit"
+        disabled={
+          isLoading || !selectedCompany || !selectedYear || !selectedPeriod
+        }
+        className="w-full"
+      >
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />

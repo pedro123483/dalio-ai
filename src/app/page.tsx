@@ -60,7 +60,7 @@ const Landing = () => {
     <div className="flex min-h-screen flex-col">
       {/* Hero Section */}
       <header className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
-        <div className="container mx-auto flex items-center justify-between px-4 py-6">
+        <div className="container mx-auto flex flex-col items-center justify-between gap-4 px-4 py-6 md:flex-row">
           <div className="flex items-center gap-2">
             {/* <Brain className="w-8 h-8" /> */}
             <h1 className="text-2xl font-bold">Dalio AI</h1>
@@ -68,7 +68,7 @@ const Landing = () => {
           <Link href="/sign-in">
             <Button
               variant="default"
-              className="bg-blue-600 text-white hover:bg-blue-600"
+              className="w-full bg-blue-600 text-white hover:bg-blue-600 md:w-auto"
             >
               Entrar
             </Button>
@@ -102,7 +102,7 @@ const Landing = () => {
             Revolucionando o acesso a dados no mercado financeiro
           </h2>
 
-          <div className="grid gap-10 md:grid-cols-3">
+          <div className="grid gap-10 sm:grid-cols-1 md:grid-cols-3">
             <div className="flex flex-col items-center text-center">
               <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
                 <Search className="h-8 w-8 text-blue-600" />
@@ -156,7 +156,7 @@ const Landing = () => {
             mercado financeiro
           </p>
 
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-3">
             <div className="rounded-lg bg-white p-8 shadow-sm">
               <h3 className="mb-4 text-2xl font-bold">
                 Fundos de Investimento
@@ -248,7 +248,9 @@ const Landing = () => {
             acionáveis
           </p>
 
-          <VisualWorkflow />
+          <div className="overflow-x-auto">
+            <VisualWorkflow />
+          </div>
 
           <div className="mt-16 text-center">
             <p className="mx-auto mb-6 max-w-2xl text-gray-600">
@@ -372,7 +374,7 @@ const Landing = () => {
             agentes de Inteligência Artificial no mercado financeiro.
           </p>
 
-          <div className="flex justify-center">
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link href="/sign-up">
               <Button className="h-12 w-auto bg-gray-900 px-8 text-lg enabled:hover:bg-gray-800">
                 Criar conta gratuitamente
@@ -385,7 +387,7 @@ const Landing = () => {
       {/* Footer */}
       <footer className="bg-gray-900 py-12 text-white">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col items-center justify-between md:flex-row">
+          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <div className="mb-6 flex items-center gap-2 md:mb-0">
               {/* <Brain className="w-6 h-6" /> */}
               <span className="text-xl font-bold">Dalio AI</span>

@@ -13,6 +13,8 @@ import {
   LogOut,
   Search,
   MessageSquare,
+  Menu,
+  X,
 } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
@@ -28,6 +30,13 @@ import {
 import { useUser } from "@clerk/clerk-react";
 import { useClerk } from "@clerk/nextjs";
 import { toast } from "sonner";
+import { useIsMobile } from "~/hooks/use-mobile";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "~/components/ui/sheet";
 
 const menuItems = [
   {
@@ -47,10 +56,102 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const { user } = useUser();
   const { signOut } = useClerk();
+  const isMobile = useIsMobile();
+  const [open, setOpen] = useState(false);
+
+  // Sidebar para mobile: Sheet (drawer)
+  if (isMobile) {
+    return (
+      <>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="fixed left-2 top-2 z-40 md:hidden"
+          onClick={() => setOpen(true)}
+        >
+          <Menu className="h-6 w-6" />
+        </Button>
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetContent side="left" className="w-64 max-w-[80vw] p-0">
+            <SheetHeader className="border-b px-4 py-3">
+              <SheetTitle>
+                <span className="text-lg font-semibold">Dalio AI</span>
+              </SheetTitle>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-2 top-2"
+                onClick={() => setOpen(false)}
+              >
+                <X className="h-5 w-5" />
+              </Button>
+            </SheetHeader>
+            <div className="flex h-full flex-col">
+              <nav className="grid gap-1 px-2 py-4">
+                {menuItems.map((item, index) => (
+                  <Link
+                    key={index}
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all hover:bg-accent",
+                      pathname === item.href
+                        ? "bg-accent text-accent-foreground"
+                        : "text-muted-foreground",
+                    )}
+                    onClick={() => setOpen(false)}
+                  >
+                    <item.icon className="h-5 w-5" />
+                    <span>{item.title}</span>
+                  </Link>
+                ))}
+              </nav>
+              <div className="mt-auto border-t p-4">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start gap-2"
+                    >
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={user?.imageUrl} />
+                        <AvatarFallback>
+                          {user?.firstName?.charAt(0)}
+                          {user?.lastName?.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span>
+                        {user?.firstName} {user?.lastName}
+                      </span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => {
+                        signOut();
+                        toast.success("Desconectado com sucesso!");
+                      }}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Sair</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </>
+    );
+  }
+
+  // Sidebar para desktop
   return (
     <div
       className={cn(
-        "flex flex-col border-r bg-background transition-all duration-300",
+        "hidden flex-col border-r bg-background transition-all duration-300 md:flex",
         collapsed ? "w-16" : "w-54",
       )}
     >
@@ -120,8 +221,6 @@ export function Sidebar() {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {/* <DropdownMenuItem>Perfil</DropdownMenuItem> */}
-            {/* <DropdownMenuItem>Preferências</DropdownMenuItem> */}
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
