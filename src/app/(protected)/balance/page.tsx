@@ -75,8 +75,8 @@ const Balance = () => {
             <div className="grid w-full gap-4 md:grid-cols-2">
               <Card className="md:col-span-2">
                 <CardHeader>
-                  <CardTitle>Relatório Patrimonial</CardTitle>
-                  <CardDescription>Visualização do documento</CardDescription>
+                  <CardTitle>Visualização do documento</CardTitle>
+                  
                 </CardHeader>
                 <CardContent>
                   <BalancePreview
