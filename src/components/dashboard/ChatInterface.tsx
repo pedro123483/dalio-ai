@@ -11,6 +11,7 @@ import { Button } from "~/components/ui/button";
 
 export function ChatInterface() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const {
     messages,
@@ -38,11 +39,30 @@ export function ChatInterface() {
     "Qual foi a evolução do IPCA nos últimos 12 meses?",
   ];
 
-  useEffect(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+  // Função para rolar para o final
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
+  };
+
+  // Rolar para o final quando novas mensagens chegarem
+  useEffect(() => {
+    scrollToBottom();
   }, [messages]);
+
+  // Rolar para o final quando o conteúdo mudar (para mensagens em streaming)
+  useEffect(() => {
+    const observer = new MutationObserver(scrollToBottom);
+    if (messagesEndRef.current) {
+      observer.observe(messagesEndRef.current, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+      });
+    }
+    return () => observer.disconnect();
+  }, []);
 
   const handleChatSubmit = (e: React.FormEvent) => {
     handleSubmit(e);
@@ -74,6 +94,7 @@ export function ChatInterface() {
           {messages.map((message) => (
             <ChatMessage key={message.id} message={message} />
           ))}
+          <div ref={messagesEndRef} />
         </div>
 
         {messages.length === 0 && (

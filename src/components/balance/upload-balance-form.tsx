@@ -29,6 +29,7 @@ export function UploadBalanceForm() {
   const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null)
   const [showChat, setShowChat] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
   
   // Hook para o chat com o PDF
   const { messages, input, handleInputChange, handleSubmit, isLoading: isLoadingChat } = useChat({
@@ -49,14 +50,30 @@ export function UploadBalanceForm() {
     }
   })
 
-    const scrollContainerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight
+  // Função para rolar para o final
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages])
+  };
 
+  // Rolar para o final quando novas mensagens chegarem
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  // Rolar para o final quando o conteúdo mudar (para mensagens em streaming)
+  useEffect(() => {
+    const observer = new MutationObserver(scrollToBottom);
+    if (messagesEndRef.current) {
+      observer.observe(messagesEndRef.current, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+      });
+    }
+    return () => observer.disconnect();
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -333,7 +350,7 @@ export function UploadBalanceForm() {
           </div>
           
           <div className="border rounded-lg h-[500px] flex flex-col">
-            <div className="flex-1 p-4 overflow-auto" ref={scrollContainerRef}>
+            <div className="flex-1 p-4 overflow-auto">
               {messages.length === 0 ? (
                 <p className="text-center text-muted-foreground p-4">
                   Faça perguntas sobre o documento que você enviou.
@@ -361,6 +378,7 @@ export function UploadBalanceForm() {
                       )}
                     </div>
                   ))}
+                  <div ref={messagesEndRef} />
                 </div>
               )}
               

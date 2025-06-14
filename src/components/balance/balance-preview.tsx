@@ -27,6 +27,7 @@ export function BalancePreview({
   const [pageNumber, setPageNumber] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [resetKey, setResetKey] = useState(0); // Chave para forçar recriação do chat
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Guarda os valores anteriores para detectar mudanças
   const prevCompanyRef = useRef(company);
@@ -59,6 +60,31 @@ export function BalancePreview({
     // A chave de reset faz com que um novo chat seja criado quando alterada
     id: `pdf-chat-${company}-${year}-${period}-${resetKey}`,
   });
+
+  // Função para rolar para o final
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  // Rolar para o final quando novas mensagens chegarem
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  // Rolar para o final quando o conteúdo mudar (para mensagens em streaming)
+  useEffect(() => {
+    const observer = new MutationObserver(scrollToBottom);
+    if (messagesEndRef.current) {
+      observer.observe(messagesEndRef.current, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+      });
+    }
+    return () => observer.disconnect();
+  }, []);
 
   // Detectar mudanças nos parâmetros do PDF e resetar o chat
   useEffect(() => {
@@ -261,6 +287,7 @@ export function BalancePreview({
                       )}
                     </div>
                   ))}
+                  <div ref={messagesEndRef} />
                 </div>
               )}
 
