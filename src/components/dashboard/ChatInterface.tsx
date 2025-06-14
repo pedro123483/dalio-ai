@@ -35,6 +35,7 @@ export function ChatInterface() {
     "Qual cenário do Itaú econômico atualmente?",
     "Qual a inflação do Brasil em 2024?",
     "Qual a taxa básica de juros do Brasil em 2024?",
+    "Qual foi a evolução do IPCA nos últimos 12 meses?",
   ];
 
   useEffect(() => {

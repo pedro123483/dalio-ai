@@ -2,6 +2,8 @@ import { tool as createTool } from "ai";
 import { z } from "zod";
 import axios from "axios";
 import { openai } from "@ai-sdk/openai";
+import igpm from "./igpm.json";
+import ipca from "./ipca.json";
 
 export const brapiQuoteTool = createTool({
   description:
@@ -42,7 +44,6 @@ export const assetComparisonTool = createTool({
   }),
 
   execute: async function ({ tickers, range, interval }) {
-    console.log("tickers", tickers);
     if (tickers && tickers.trim() !== "") {
       try {
         // Valores padrão mais leves
@@ -52,8 +53,6 @@ export const assetComparisonTool = createTool({
         const stockResponse = await axios.get(
           `https://brapi.dev/api/quote/${tickers}?token=${process.env.BRAPI_API_KEY}&range=${safeRange}&interval=${safeInterval}`,
         );
-
-        console.log("stockResponse", stockResponse.data);
 
         for (const asset of stockResponse.data.results) {
           console.log("asset historicalDataPrice", asset.historicalDataPrice);
@@ -133,16 +132,19 @@ export const incomeStatementTool = createTool({
 });
 
 export const inflationTool = createTool({
-  description: "Buscar a inflação do Brasil",
+  description: "Buscar a inflação do Brasil e a evolucao da inflação no Brasil(a data deve ser no formato dd/mm/yyyy, nunca retorne no formato mm/yyyy)",
   parameters: z.object({
     startDate: z.string().describe("Data inicial do período a ser buscado. Exemplo: 01/01/2020"),
     endDate: z.string().describe("Data final do período a ser buscado. Exemplo: 01/01/2021"),
   }),
 
   execute: async function ({ startDate, endDate }) {
+    console.log("inflationTool", startDate, endDate);
     const { data } = await axios.get(
       `https://brapi.dev/api/v2/inflation?country=brazil&start=${startDate}&end=${endDate}&sortBy=date&sortOrder=desc&token=${process.env.BRAPI_API_KEY}`,
     );
+
+    console.log("data inflationTool", data);
 
     return data;
   },
@@ -156,18 +158,181 @@ export const primeRateTool = createTool({
   }),
 
   execute: async function ({ startDate, endDate }) {
-    console.log("startDate", startDate);
-    console.log("endDate", endDate);
     const { data } = await axios.get(
       `https://brapi.dev/api/v2/prime-rate?country=brazil&start=${startDate}&end=${endDate}&sortBy=date&sortOrder=desc&token=${process.env.BRAPI_API_KEY}`,
     );
-
-    console.log("data", data);
 
     return data;
   },
 });
 
+export const igpmTool = createTool({
+  description: `Buscar o IGP-M do Brasil, a nossa data atual é ${new Date().toLocaleDateString('pt-BR')}`,
+  parameters: z.object({
+    startDate: z.string().describe("Data inicial do período a ser buscado. Exemplo: janeiro/2010"),
+    endDate: z.string().describe("Data final do período a ser buscado. Exemplo: dezembro/2024"),
+  }),
+
+  execute: async function ({ startDate, endDate }) {
+    console.log("startDate", startDate);
+    console.log("endDate", endDate);
+
+    try {
+      // Função para converter mês por extenso para número
+      const getMonthNumber = (month: string) => {
+        const months: { [key: string]: string } = {
+          'janeiro': '01', 'fevereiro': '02', 'março': '03', 'abril': '04',
+          'maio': '05', 'junho': '06', 'julho': '07', 'agosto': '08',
+          'setembro': '09', 'outubro': '10', 'novembro': '11', 'dezembro': '12'
+        };
+        return months[month.toLowerCase()] || '01';
+      };
+
+      // Função para formatar a data
+      const formatDate = (dateStr: string) => {
+        const [month, year] = dateStr.split('/');
+        if (!month || !year) {
+          throw new Error('Formato de data inválido');
+        }
+        const monthNum = getMonthNumber(month);
+        return `${year}-${monthNum}`;
+      };
+
+      // Função para converter data do formato do JSON para formato comparável
+      const convertJsonDate = (dateStr: string) => {
+        const [month, year] = dateStr.split('/');
+        const monthNum = getMonthNumber(month || '');
+        return `${year}-${monthNum}`;
+      };
+
+      // Formatar as datas de entrada
+      const formattedStartDate = formatDate(startDate);
+      const formattedEndDate = formatDate(endDate);
+
+      // Encontrar o índice da data inicial e final no array
+      const startIndex = igpm.findIndex(item => {
+        if (!item.date) return false;
+        const itemDate = convertJsonDate(item.date);
+        return itemDate >= formattedStartDate;
+      });
+
+      const endIndex = igpm.findIndex(item => {
+        if (!item.date) return false;
+        const itemDate = convertJsonDate(item.date);
+        return itemDate > formattedEndDate;
+      });
+
+      // Se não encontrar a data final, usar o último item do array
+      const finalEndIndex = endIndex === -1 ? igpm.length : endIndex;
+
+      // Extrair os dados do intervalo
+      const data = igpm.slice(startIndex, finalEndIndex);
+
+      // Se não houver dados, retornar mensagem informativa
+      if (data.length === 0) {
+        return {
+          message: `Não foram encontrados dados do IGP-M para o período de ${startDate} a ${endDate}`,
+          data: []
+        };
+      }
+
+      console.log("data igpm", data);
+
+      return data;
+
+    } catch (error) {
+      console.error('Erro ao processar dados do IGP-M:', error);
+      return {
+        error: 'Erro ao processar os dados do IGP-M',
+        message: 'Ocorreu um erro ao buscar os dados. Por favor, verifique o formato das datas.'
+      };
+    }
+  },
+});
+
+export const ipcaTool = createTool({
+  description: `Buscar o IPCA do Brasil, a nossa data atual é ${new Date().toLocaleDateString('pt-BR')}`,
+  parameters: z.object({
+    startDate: z.string().describe("Data inicial do período a ser buscado. Exemplo: janeiro/2010"),
+    endDate: z.string().describe("Data final do período a ser buscado. Exemplo: dezembro/2024"),
+  }),
+
+  execute: async function ({ startDate, endDate }) {
+    console.log("startDate", startDate);
+    console.log("endDate", endDate);
+
+    try {
+      // Função para converter mês por extenso para número
+      const getMonthNumber = (month: string) => {
+        const months: { [key: string]: string } = {
+          'janeiro': '01', 'fevereiro': '02', 'março': '03', 'abril': '04',
+          'maio': '05', 'junho': '06', 'julho': '07', 'agosto': '08',
+          'setembro': '09', 'outubro': '10', 'novembro': '11', 'dezembro': '12'
+        };
+        return months[month.toLowerCase()] || '01';
+      };
+
+      // Função para formatar a data
+      const formatDate = (dateStr: string) => {
+        const [month, year] = dateStr.split('/');
+        if (!month || !year) {
+          throw new Error('Formato de data inválido');
+        }
+        const monthNum = getMonthNumber(month);
+        return `${year}-${monthNum}`;
+      };
+
+      // Função para converter data do formato do JSON para formato comparável
+      const convertJsonDate = (dateStr: string) => {
+        const [month, year] = dateStr.split('/');
+        const monthNum = getMonthNumber(month || '');
+        return `${year}-${monthNum}`;
+      };
+
+      // Formatar as datas de entrada
+      const formattedStartDate = formatDate(startDate);
+      const formattedEndDate = formatDate(endDate);
+
+      // Encontrar o índice da data inicial e final no array
+      const startIndex = ipca.findIndex(item => {
+        if (!item.date) return false;
+        const itemDate = convertJsonDate(item.date);
+        return itemDate >= formattedStartDate;
+      });
+
+      const endIndex = ipca.findIndex(item => {
+        if (!item.date) return false;
+        const itemDate = convertJsonDate(item.date);
+        return itemDate > formattedEndDate;
+      });
+
+      // Se não encontrar a data final, usar o último item do array
+      const finalEndIndex = endIndex === -1 ? ipca.length : endIndex;
+
+      // Extrair os dados do intervalo
+      const data = ipca.slice(startIndex, finalEndIndex);
+
+      // Se não houver dados, retornar mensagem informativa
+      if (data.length === 0) {
+        return {
+          message: `Não foram encontrados dados do IPCA para o período de ${startDate} a ${endDate}`,
+          data: []
+        };
+      }
+
+      console.log("data ipca", data);
+
+      return data;
+
+    } catch (error) {
+      console.error('Erro ao processar dados do IPCA:', error);
+      return {
+        error: 'Erro ao processar os dados do IPCA',
+        message: 'Ocorreu um erro ao buscar os dados. Por favor, verifique o formato das datas.'
+      };
+    }
+  },
+});
 
 export const tools = {
   getAssetQuote: brapiQuoteTool,
@@ -175,5 +340,7 @@ export const tools = {
   getIncomeStatement: incomeStatementTool,
   getInflation: inflationTool,
   getPrimeRate: primeRateTool,
+  getIGPM: igpmTool,
+  getIPCA: ipcaTool,
   web_search_preview: openai.tools.webSearchPreview(),
 };

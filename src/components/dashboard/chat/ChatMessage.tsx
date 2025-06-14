@@ -8,6 +8,8 @@ import { StockInfoCard } from "./StockInfoCard";
 import { AreaChartComparation } from "./AreaChartComparation";
 import { IncomeStatementCard } from "./IncomeStatementCard";
 import { InflationChart } from "./InflationChart";
+import { IgpmChart } from "./IgpmChart";
+import { IpcaChart } from "./IpcaChart";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -182,6 +184,42 @@ export function ChatMessage({ message }: any) {
                 return (
                   <div key={toolCallId}>
                     <InflationChart data={data.inflation} />
+                    {/* Área para o texto explicativo do LLM abaixo do componente */}
+                    <div className="mt-3 rounded-lg border bg-slate-50 p-3 text-sm">
+                      <p className="font-medium text-slate-700">Análise:</p>
+                      <div className="prose prose-sm text-slate-600">
+                        {followUpText}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (toolName === "getIGPM") {
+                const data = toolInvocation.result;
+                const followUpText = getFollowUpContent();
+
+                return (
+                  <div key={toolCallId}>
+                    <IgpmChart data={data} />
+                    {/* Área para o texto explicativo do LLM abaixo do componente */}
+                    <div className="mt-3 rounded-lg border bg-slate-50 p-3 text-sm">
+                      <p className="font-medium text-slate-700">Análise:</p>
+                      <div className="prose prose-sm text-slate-600">
+                        {followUpText}
+                      </div>
+                    </div>
+                  </div>
+                );
+              }
+
+              if (toolName === "getIPCA") {
+                const data = toolInvocation.result;
+                const followUpText = getFollowUpContent();
+
+                return (
+                  <div key={toolCallId}>
+                    <IpcaChart data={data} />
                     {/* Área para o texto explicativo do LLM abaixo do componente */}
                     <div className="mt-3 rounded-lg border bg-slate-50 p-3 text-sm">
                       <p className="font-medium text-slate-700">Análise:</p>
