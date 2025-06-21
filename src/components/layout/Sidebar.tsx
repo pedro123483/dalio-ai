@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   BarChart3,
   FileUp,
@@ -37,6 +37,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
+import { Dialog, DialogContent } from "~/components/ui/dialog";
 
 const menuItems = [
   {
@@ -53,16 +54,18 @@ const menuItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const { user } = useUser();
   const { signOut } = useClerk();
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
+  const [showAccount, setShowAccount] = useState(false);
 
   // Sidebar para mobile: Sheet (drawer)
   if (isMobile) {
     return (
-      <>
+      <div>
         <Button
           variant="ghost"
           size="icon"
@@ -127,6 +130,15 @@ export function Sidebar() {
                   <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
                     <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setOpen(false);
+                        router.push("/profile");
+                      }}
+                    >
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Visualizar Conta</span>
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={() => {
@@ -143,7 +155,7 @@ export function Sidebar() {
             </div>
           </SheetContent>
         </Sheet>
-      </>
+      </div>
     );
   }
 
@@ -221,6 +233,10 @@ export function Sidebar() {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => router.push("/profile")}>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Visualizar Conta</span>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
