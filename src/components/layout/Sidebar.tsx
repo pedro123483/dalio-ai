@@ -146,7 +146,7 @@ export function Sidebar() {
                   </DropdownMenuContent>
                 </DropdownMenu>
                 <Dialog open={showAccount} onOpenChange={setShowAccount}>
-                  <DialogContent className="max-w-md w-full">
+                  <DialogContent className="w-full max-w-md">
                     <div className="flex flex-col items-center gap-4 py-4">
                       <Avatar className="h-20 w-20">
                         <AvatarImage src={user?.imageUrl} />
@@ -156,15 +156,20 @@ export function Sidebar() {
                         </AvatarFallback>
                       </Avatar>
                       <div className="text-center">
-                        <div className="font-bold text-lg">
+                        <div className="text-lg font-bold">
                           {user?.firstName} {user?.lastName}
                         </div>
                         <div className="text-sm text-muted-foreground">
                           {user?.emailAddresses?.[0]?.emailAddress}
                         </div>
-                        <div className="text-xs text-muted-foreground mt-2">
-                          ID: {user?.id}
-                        </div>
+                        {user?.createdAt && (
+                          <div className="mt-1 text-xs text-muted-foreground">
+                            Criado em:{" "}
+                            {new Date(user.createdAt).toLocaleDateString(
+                              "pt-BR",
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </DialogContent>
@@ -268,7 +273,7 @@ export function Sidebar() {
           </DropdownMenuContent>
         </DropdownMenu>
         <Dialog open={showAccount} onOpenChange={setShowAccount}>
-          <DialogContent className="max-w-md w-full">
+          <DialogContent className="w-full max-w-md">
             <div className="flex flex-col items-center gap-4 py-4">
               <Avatar className="h-20 w-20">
                 <AvatarImage src={user?.imageUrl} />
@@ -278,15 +283,18 @@ export function Sidebar() {
                 </AvatarFallback>
               </Avatar>
               <div className="text-center">
-                <div className="font-bold text-lg">
+                <div className="text-lg font-bold">
                   {user?.firstName} {user?.lastName}
                 </div>
                 <div className="text-sm text-muted-foreground">
                   {user?.emailAddresses?.[0]?.emailAddress}
                 </div>
-                <div className="text-xs text-muted-foreground mt-2">
-                  ID: {user?.id}
-                </div>
+                {user?.createdAt && (
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    Criado em:{" "}
+                    {new Date(user.createdAt).toLocaleDateString("pt-BR")}
+                  </div>
+                )}
               </div>
             </div>
           </DialogContent>
