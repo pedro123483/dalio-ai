@@ -37,6 +37,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "~/components/ui/sheet";
+import { Dialog, DialogContent } from "~/components/ui/dialog";
 
 const menuItems = [
   {
@@ -58,11 +59,12 @@ export function Sidebar() {
   const { signOut } = useClerk();
   const isMobile = useIsMobile();
   const [open, setOpen] = useState(false);
+  const [showAccount, setShowAccount] = useState(false);
 
   // Sidebar para mobile: Sheet (drawer)
   if (isMobile) {
     return (
-      <>
+      <div>
         <Button
           variant="ghost"
           size="icon"
@@ -127,6 +129,10 @@ export function Sidebar() {
                   <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
                     <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => setShowAccount(true)}>
+                      <Settings className="mr-2 h-4 w-4" />
+                      <span>Visualizar Conta</span>
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={() => {
@@ -139,11 +145,35 @@ export function Sidebar() {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+                <Dialog open={showAccount} onOpenChange={setShowAccount}>
+                  <DialogContent className="max-w-md w-full">
+                    <div className="flex flex-col items-center gap-4 py-4">
+                      <Avatar className="h-20 w-20">
+                        <AvatarImage src={user?.imageUrl} />
+                        <AvatarFallback>
+                          {user?.firstName?.charAt(0)}
+                          {user?.lastName?.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="text-center">
+                        <div className="font-bold text-lg">
+                          {user?.firstName} {user?.lastName}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {user?.emailAddresses?.[0]?.emailAddress}
+                        </div>
+                        <div className="text-xs text-muted-foreground mt-2">
+                          ID: {user?.id}
+                        </div>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
           </SheetContent>
         </Sheet>
-      </>
+      </div>
     );
   }
 
@@ -221,6 +251,10 @@ export function Sidebar() {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => setShowAccount(true)}>
+              <Settings className="mr-2 h-4 w-4" />
+              <span>Visualizar Conta</span>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => {
@@ -233,6 +267,30 @@ export function Sidebar() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        <Dialog open={showAccount} onOpenChange={setShowAccount}>
+          <DialogContent className="max-w-md w-full">
+            <div className="flex flex-col items-center gap-4 py-4">
+              <Avatar className="h-20 w-20">
+                <AvatarImage src={user?.imageUrl} />
+                <AvatarFallback>
+                  {user?.firstName?.charAt(0)}
+                  {user?.lastName?.charAt(0)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="text-center">
+                <div className="font-bold text-lg">
+                  {user?.firstName} {user?.lastName}
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {user?.emailAddresses?.[0]?.emailAddress}
+                </div>
+                <div className="text-xs text-muted-foreground mt-2">
+                  ID: {user?.id}
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
