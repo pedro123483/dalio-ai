@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   BarChart3,
   FileUp,
@@ -54,6 +54,7 @@ const menuItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
   const { user } = useUser();
   const { signOut } = useClerk();
@@ -129,7 +130,12 @@ export function Sidebar() {
                   <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => setShowAccount(true)}>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setOpen(false);
+                        router.push("/profile");
+                      }}
+                    >
                       <Settings className="mr-2 h-4 w-4" />
                       <span>Visualizar Conta</span>
                     </DropdownMenuItem>
@@ -145,35 +151,6 @@ export function Sidebar() {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <Dialog open={showAccount} onOpenChange={setShowAccount}>
-                  <DialogContent className="w-full max-w-md">
-                    <div className="flex flex-col items-center gap-4 py-4">
-                      <Avatar className="h-20 w-20">
-                        <AvatarImage src={user?.imageUrl} />
-                        <AvatarFallback>
-                          {user?.firstName?.charAt(0)}
-                          {user?.lastName?.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="text-center">
-                        <div className="text-lg font-bold">
-                          {user?.firstName} {user?.lastName}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {user?.emailAddresses?.[0]?.emailAddress}
-                        </div>
-                        {user?.createdAt && (
-                          <div className="mt-1 text-xs text-muted-foreground">
-                            Criado em:{" "}
-                            {new Date(user.createdAt).toLocaleDateString(
-                              "pt-BR",
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
               </div>
             </div>
           </SheetContent>
@@ -256,7 +233,7 @@ export function Sidebar() {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => setShowAccount(true)}>
+            <DropdownMenuItem onClick={() => router.push("/profile")}>
               <Settings className="mr-2 h-4 w-4" />
               <span>Visualizar Conta</span>
             </DropdownMenuItem>
@@ -272,33 +249,6 @@ export function Sidebar() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Dialog open={showAccount} onOpenChange={setShowAccount}>
-          <DialogContent className="w-full max-w-md">
-            <div className="flex flex-col items-center gap-4 py-4">
-              <Avatar className="h-20 w-20">
-                <AvatarImage src={user?.imageUrl} />
-                <AvatarFallback>
-                  {user?.firstName?.charAt(0)}
-                  {user?.lastName?.charAt(0)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="text-center">
-                <div className="text-lg font-bold">
-                  {user?.firstName} {user?.lastName}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {user?.emailAddresses?.[0]?.emailAddress}
-                </div>
-                {user?.createdAt && (
-                  <div className="mt-1 text-xs text-muted-foreground">
-                    Criado em:{" "}
-                    {new Date(user.createdAt).toLocaleDateString("pt-BR")}
-                  </div>
-                )}
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   );
