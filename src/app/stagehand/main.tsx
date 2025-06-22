@@ -6,7 +6,6 @@ import path from 'path';
   const browser = await chromium.launch({ headless: false, slowMo: 100 });
   const page = await browser.newPage();
 
-  /***************** 1. Acessa e abre Consulta Avançada *****************/
   await page.goto('https://www.gov.br/centraldebalancos/#/demonstracoes');
   await page.getByText('Consulta avançada').click();
 
@@ -14,8 +13,8 @@ import path from 'path';
   const tipoDropdown = page.locator('p-dropdown[formcontrolname="tipoDemonstracao"]');
   await tipoDropdown.locator('.ui-dropdown-label').click();
   await page.waitForSelector('.ui-dropdown-items');
-  await page.keyboard.press('ArrowDown');   // 1ª opção
-  await page.keyboard.press('ArrowDown');   // 2ª opção (BP)
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('ArrowDown');
   await page.keyboard.press('Enter');
 
   /***************** 3. Seleciona Ano = 2022 ****************************/
@@ -31,19 +30,17 @@ import path from 'path';
     console.warn('⚠️ Ano 2022 não encontrado – usando ano padrão da tela.');
   }
 
-  /***************** 4. Clica em Consultar ******************************/
   await page.getByRole('button', { name: 'Consultar' }).click();
   await page.waitForSelector('button:has-text("pdf")');
 
   /***************** Pasta de download **********************************/
-  const downloadDir = path.join(process.cwd(), 'downloads');
+  const downloadDir = path.join(process.cwd(), 'balances');
   if (!fs.existsSync(downloadDir)) fs.mkdirSync(downloadDir);
 
   /***************** 5. Loop páginas 1 → 30 *****************************/
   for (let pageNum = 1; pageNum <= 30; pageNum++) {
     console.log(`📄 Página ${pageNum}`);
 
-    // 5.1 – Baixa todos os PDFs da página atual
     const pdfButtons = await page.locator('button:has-text("pdf")').all();
     console.log(`   ↳ ${pdfButtons.length} arquivos encontrados`);
 
@@ -58,7 +55,6 @@ import path from 'path';
       console.log(`   ✔️  Salvo: ${filePath}`);
     }
 
-    // 5.2 – Procura o link da próxima página (número pageNum+1)
     const nextPageLink = page.locator(
       `a.ui-paginator-page:text-is("${pageNum + 1}")`
     );
@@ -68,8 +64,8 @@ import path from 'path';
       break;
     }
 
-    await nextPageLink.first().click();        // vai para a próxima página
-    await page.waitForSelector('button:has-text("pdf")'); // aguarda carregar
+    await nextPageLink.first().click();
+    await page.waitForSelector('button:has-text("pdf")');
   }
 
   await browser.close();

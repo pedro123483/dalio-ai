@@ -1,14 +1,3 @@
-#!/usr/bin/env tsx
-
-/**
- * Script para fazer upload de todos os PDFs da pasta balances para o S3
- * 
- * Uso:
- * npm run upload-balances
- * ou
- * npx tsx scripts/upload-balances.ts
- */
-
 import { readdir, readFile } from "fs/promises";
 import { join } from "path";
 import { config } from "dotenv";
@@ -17,10 +6,8 @@ import {
   PutObjectCommand,
 } from "@aws-sdk/client-s3";
 
-// Carregar variáveis de ambiente
 config();
 
-// Configurar cliente S3
 const s3Client = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {
@@ -29,7 +16,6 @@ const s3Client = new S3Client({
   },
 });
 
-// Função para extrair informações do nome do arquivo
 function extractFileInfo(fileName: string) {
   const info = {
     companyId: null as number | null,
@@ -39,24 +25,20 @@ function extractFileInfo(fileName: string) {
   };
   
   try {
-    // Extrair ano - procurar por padrão de data (31-12-2024)
     const yearMatch = fileName.match(/(\d{4})/g);
     if (yearMatch && yearMatch.length > 0) {
-      // Pegar o último ano encontrado (provavelmente o mais recente)
       const years = yearMatch.map(y => parseInt(y)).filter(y => y >= 1900 && y <= 2100);
       if (years.length > 0) {
-        info.year = Math.max(...years); // Pegar o ano mais recente
+        info.year = Math.max(...years);
       }
     }
     
-    // Extrair CNPJ/ID da empresa
     const cnpjMatch = fileName.match(/(\d{14})/);
     if (cnpjMatch) {
       info.companyId = parseInt(cnpjMatch[0].slice(-6));
       info.cnpj = cnpjMatch[0];
     }
-    
-    // Identificar período
+
     if (fileName.includes('BP') || fileName.includes('Balanço_Patrimonial')) {
       info.period = 'Anual';
     } else if (fileName.includes('Q1')) {
@@ -79,16 +61,13 @@ function extractFileInfo(fileName: string) {
 async function uploadBalances() {
   try {
     console.log("🚀 Iniciando upload de balanços...");
-    
-    // Verificar variáveis de ambiente
+
     if (!process.env.S3_BUCKET) {
       throw new Error("S3_BUCKET não configurado");
     }
-    
-    // Caminho para a pasta balances
+
     const balancesPath = join(process.cwd(), "balances");
-    
-    // Ler arquivos da pasta
+
     const files = await readdir(balancesPath);
     const pdfFiles = files.filter(file => file.toLowerCase().endsWith('.pdf'));
     
@@ -101,27 +80,25 @@ async function uploadBalances() {
     
     let successCount = 0;
     let errorCount = 0;
-    
-    // Processar cada arquivo
+
     for (const fileName of pdfFiles) {
       try {
         console.log(`📤 Processando: ${fileName}`);
-        
-        // Ler arquivo
+
         const filePath = join(balancesPath, fileName);
         const fileBuffer = await readFile(filePath);
-        
-        // Extrair informações
+
         const fileInfo = extractFileInfo(fileName);
         const companyId = fileInfo.companyId || 1;
         const year = fileInfo.year || new Date().getFullYear();
         const period = fileInfo.period || 'Anual';
         
-        // Usar "empresa XPTO" como nome da empresa e formato esperado pelo frontend
-        const company = fileInfo.cnpj ? `CNPJ: ${fileInfo.cnpj}` : "empresa XPTO";
-        const key = `balances/${company}/${year}/${period}.pdf`;
+        const company = await searchCompanyName(fileInfo.cnpj);
         
-        // Upload para S3
+        await new Promise(resolve => setTimeout(resolve, 10000));
+        
+        const key = `balances/${company}/${year}/${period}.pdf`;
+
         await s3Client.send(
           new PutObjectCommand({
             Bucket: process.env.S3_BUCKET!,
@@ -156,7 +133,6 @@ async function uploadBalances() {
       }
     }
     
-    // Resumo final
     console.log("📊 Resumo do upload:");
     console.log(`   ✅ Sucessos: ${successCount}`);
     console.log(`   ❌ Erros: ${errorCount}`);
@@ -174,5 +150,60 @@ async function uploadBalances() {
   }
 }
 
-// Executar se chamado diretamente
+async function searchCompanyName(cnpj: string | null): Promise<string> {
+  if (!cnpj) {
+    console.log('⚠️ CNPJ não fornecido para busca de nome da empresa');
+    return 'Nome não encontrado';
+  }
+
+  try {
+    console.log(`🔍 Buscando nome da empresa para CNPJ: ${cnpj}`);
+    
+    const response = await fetch(`https://www.receitaws.com.br/v1/cnpj/${cnpj}`, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0'
+      }
+    });
+
+    if (!response.ok) {
+      console.error(`❌ Erro na requisição para ReceitaWS:`, {
+        cnpj,
+        status: response.status,
+        statusText: response.statusText,
+        url: response.url
+      });
+      throw new Error(`Erro na requisição: ${response.status} - ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    
+    if (data.status === 'ERROR') {
+      console.error(`❌ Erro retornado pela API ReceitaWS:`, {
+        cnpj,
+        message: data.message,
+        fullResponse: data
+      });
+      return `CNPJ: ${cnpj}`;
+    }
+
+    if (data.nome) {
+      console.log(`✅ Nome encontrado para CNPJ ${cnpj}: ${data.nome}`);
+      return data.nome;
+    } else {
+      console.warn(`⚠️ Nome não encontrado na resposta da API para CNPJ ${cnpj}:`, data);
+      return `CNPJ: ${cnpj}`;
+    }
+
+  } catch (error) {
+    console.error(`❌ Erro detalhado ao buscar nome da empresa:`, {
+      cnpj,
+      errorType: error instanceof Error ? error.constructor.name : typeof error,
+      errorMessage: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString()
+    });
+    return `CNPJ: ${cnpj}`;
+  }
+}
+
 uploadBalances();
