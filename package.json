@@ -18,7 +18,12 @@
     "lint:fix": "next lint --fix",
     "preview": "next build && next start",
     "start": "next start",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "stagehand": "node -r dotenv/config --loader ts-node/esm src/app/stagehand/main.ts",
+    "stagehand:main": "node -r dotenv/config --loader ts-node/esm src/app/stagehand/main.ts",
+    "stagehand:alternative": "node -r dotenv/config --loader ts-node/esm src/app/stagehand/alternative-download.ts",
+    "stagehand:targeted": "node -r dotenv/config --loader ts-node/esm src/app/stagehand/targeted-download.ts",
+    "upload-balances": "npx tsx scripts/upload-balances.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^1.2.10",
