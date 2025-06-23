@@ -95,7 +95,7 @@ async function uploadBalances() {
         
         const company = await searchCompanyName(fileInfo.cnpj);
         
-        await new Promise(resolve => setTimeout(resolve, 10000));
+        await new Promise(resolve => setTimeout(resolve, 5000));
         
         const key = `balances/${company}/${year}/${period}.pdf`;
 
